@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  database:
+    image: cassandra
+    container_name: cassandra-chat-app
+    volumes:
+      - ./data:/var/lib/cassandra
+    ports:
+      - 9042:9042
+  
