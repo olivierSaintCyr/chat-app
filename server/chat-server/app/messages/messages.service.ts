@@ -18,6 +18,7 @@ export class MessagesService {
         // get user concerned by new message in conversation collection
         // notify user concerned 
         const to = ['abcdef', 'ghijklm'];
+        // update last message in convo
         const lastMessage = { message, to };
         this.emitLastMessage(lastMessage);
     }

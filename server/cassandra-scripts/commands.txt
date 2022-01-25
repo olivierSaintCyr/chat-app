@@ -1,0 +1,2 @@
+cqlsh 127.0.0.1 9042 -f cassandra-scripts/init/init-chat-tables.cql // to init
+cqlsh 127.0.0.1 9042 -f cassandra-scripts/poputate/populate-for-dev.cql
