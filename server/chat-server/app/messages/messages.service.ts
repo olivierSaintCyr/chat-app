@@ -1,4 +1,5 @@
 import { Message } from '@app/message.interface';
+import { MessagesDBService } from '@app/messages/messages-db.service';
 import { Service } from 'typedi';
 
 export interface LastMessage {
@@ -9,6 +10,8 @@ export interface LastMessage {
 @Service()
 export class MessagesService {
     private lastMessageListener: Array<(message: LastMessage) => void> = [];
+
+    constructor(messageDBService: MessagesDBService) {}
 
     receive(message: Message) {
         // save to db
@@ -25,7 +28,7 @@ export class MessagesService {
 
     private emitLastMessage(lastMessage: LastMessage) {
         this.lastMessageListener.forEach((onNewMessage) => {
-            onNewMessage(lastMessage)
+            onNewMessage(lastMessage);
         });
     }
 }

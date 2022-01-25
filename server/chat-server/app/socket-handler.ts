@@ -1,8 +1,8 @@
-import { UserMessage } from './message.interface';
+import { UserMessage, Message } from './message.interface';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { createNewMessage } from './create-message';
-import { MessagesService } from '@app/messages/messages.service';
+import { LastMessage, MessagesService } from '@app/messages/messages.service';
 
 export class SocketHandler {
     io: Server;
@@ -10,8 +10,11 @@ export class SocketHandler {
     private socketIdToUser = new Map<string, string>(); //
     private currentRoom = new Map<string, string>(); // socket id => roomId 
 
-    constructor(httpServer: HttpServer, MessagesService: MessagesService) {
+    constructor(httpServer: HttpServer, private messagesService: MessagesService) {
         this.io = new Server(httpServer);
+        this.messagesService.subscribe((lastConversationMessage) => {
+            this.sendLastMessage(lastConversationMessage);
+        });
     }
 
     handleSocket() {
@@ -27,6 +30,7 @@ export class SocketHandler {
             socket.on('join', (conversationId: string) => {
                 // TODO: look if user has the auth to join this convo
                 // console.log(`socket id: ${socket.id} ${[...socket.rooms.values()]}`);
+                console.log("join", conversationId);
                 socket.join(conversationId);
                 this.currentRoom.set(socket.id, conversationId);
             });
@@ -35,12 +39,17 @@ export class SocketHandler {
                 // TODO need to verify message validity
                 // call message service with userId sent message to conversation (roomId)
                 const socketId = socket.id;
-                const roomId = this.currentRoom.get(socketId);
-                if (!roomId) {
+                const conversationId = this.currentRoom.get(socketId);
+                if (!conversationId) {
+                    console.log(conversationId);
                     this.sendError('You have not joined a room yet', socket);
                     return;
                 }
-                this.sendMessage(userMessage, roomId, socketId);
+                const user  = this.socketIdToUser.get(socketId);
+                const message = createNewMessage(userMessage, user, conversationId);
+                console.log('conversation id:', message.conversation);
+                this.messagesService.receive(message);
+                this.sendMessage(message);
                 console.log(`message received : ${userMessage}`);
             });
 
@@ -56,10 +65,26 @@ export class SocketHandler {
         });
     }
 
+    private sendLastMessage(lastMessage: LastMessage) {
+        const { to: users,  message } = lastMessage;
+        for (const userId of users) {
+            const socketIds = this.userToSocketIds.get(userId);
+            if (!socketIds) {
+                continue;
+            }
+            console.log('send message to', userId, [...socketIds.values()]);
+            socketIds.forEach((socketId) => {
+                this.io.to(socketId).emit('lastMessages', message);
+            });
+        }
+    }
+
     private connectUser(socket: Socket, token: string) {
         // get user id with token
         // to remove start
-        const userChatId = token === '1' ? 'abcdef' : 'ghijklm';
+        console.log(token);
+        const userChatId = this.mockIdentity(token);
+        console.log('new connection with user', userChatId);
         // to remove end
         const socketId = socket.id;
         const userIds = this.userToSocketIds.get(userChatId);
@@ -70,6 +95,7 @@ export class SocketHandler {
         }
         
         this.socketIdToUser.set(socketId, userChatId);
+        console.log(this.socketIdToUser.size)
     }
 
     private disconnectUser(socket: Socket) {
@@ -92,13 +118,24 @@ export class SocketHandler {
         this.socketIdToUser.delete(socketId);
     }
 
-    private sendMessage(userMessage: UserMessage, roomId: string, socketId: string) {
-        const user  = this.socketIdToUser.get(socketId);
-        const message = createNewMessage(userMessage, roomId, user);
-        this.io.to(roomId).emit('messages', message);
+    private sendMessage(message: Message) {
+        this.io.to(message.conversation).emit('messages', message);
     }
 
     private sendError(errorContent: string, socket: Socket) {
         socket.emit('error', errorContent);
+    }
+
+    private mockIdentity(token: string): string {
+        switch(token) {
+            case '1':
+                return 'abcdef';
+            
+            case '2':
+                return 'ghijklm';
+            
+            default:
+                return 'nopqrst';
+        }
     }
 }
