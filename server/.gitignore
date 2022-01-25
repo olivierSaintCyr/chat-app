@@ -1,2 +1,2 @@
 data
-production.env
+.env.prod

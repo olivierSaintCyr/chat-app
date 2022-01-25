@@ -1,12 +1,17 @@
 import 'module-alias/register';
 import 'reflect-metadata';
+import dotenv from 'dotenv';
 import { MessagesService } from '@app/messages/messages.service';
 import express from 'express';
 import { createServer } from 'http';
 import { SocketHandler } from './socket-handler';
 import Container from 'typedi';
+import path from 'path';
 
+console.log(path.join(__dirname, `./.env`));
+dotenv.config({ path: path.join(__dirname, `./.env`)});
 
+console.log(process.env.DB_HOST);
 
 const app = express();
 const server = createServer(app); // TODO: change to https

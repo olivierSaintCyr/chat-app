@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc & node .",
-    "dev": "tsc -w & nodemon .",
+    "start": "tsc & cp app/environments/.env.prod dist/.env & node .",
+    "dev": "tsc -w & cp app/environments/.env.dev dist/.env & nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -30,7 +30,7 @@
     "reflect-metadata": "^0.1.13",
     "socket.io": "^4.4.1",
     "typedi": "^0.10.0"
-  }, 
+  },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
