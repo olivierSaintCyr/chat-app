@@ -19,18 +19,13 @@ export class SocketHandler {
 
     handleSocket() {
         this.io.use((socket, next) => {
-            // implement auth
-            console.log(socket.handshake.headers.auth);
-            console.log('middle ware receive new connection');
+            // TODO implement auth
             next();
         }).on('connection', (socket) => {
             const token = socket.handshake.headers.auth as string;
             this.connectUser(socket, token);
-            console.log(`new connection from user with token: ${token}`);
             socket.on('join', (conversationId: string) => {
                 // TODO: look if user has the auth to join this convo
-                // console.log(`socket id: ${socket.id} ${[...socket.rooms.values()]}`);
-                console.log("join", conversationId);
                 socket.join(conversationId);
                 this.currentRoom.set(socket.id, conversationId);
             });
@@ -41,16 +36,13 @@ export class SocketHandler {
                 const socketId = socket.id;
                 const conversationId = this.currentRoom.get(socketId);
                 if (!conversationId) {
-                    console.log(conversationId);
                     this.sendError('You have not joined a room yet', socket);
                     return;
                 }
                 const user  = this.socketIdToUser.get(socketId);
                 const message = createNewMessage(userMessage, user, conversationId);
-                console.log('conversation id:', message.conversation);
                 this.messagesService.receive(message);
                 this.sendMessage(message);
-                console.log(`message received : ${userMessage}`);
             });
 
             socket.on('leave', () => {
@@ -59,7 +51,6 @@ export class SocketHandler {
             });
 
             socket.on('disconnect', () => {
-                console.log(`user ${socket.id} disconnected`);
                 this.disconnectUser(socket);
             });
         });
@@ -72,7 +63,6 @@ export class SocketHandler {
             if (!socketIds) {
                 continue;
             }
-            console.log('send message to', userId, [...socketIds.values()]);
             socketIds.forEach((socketId) => {
                 this.io.to(socketId).emit('lastMessages', message);
             });
@@ -82,9 +72,7 @@ export class SocketHandler {
     private connectUser(socket: Socket, token: string) {
         // get user id with token
         // to remove start
-        console.log(token);
         const userChatId = this.mockIdentity(token);
-        console.log('new connection with user', userChatId);
         // to remove end
         const socketId = socket.id;
         const userIds = this.userToSocketIds.get(userChatId);
@@ -95,7 +83,6 @@ export class SocketHandler {
         }
         
         this.socketIdToUser.set(socketId, userChatId);
-        console.log(this.socketIdToUser.size)
     }
 
     private disconnectUser(socket: Socket) {
@@ -111,7 +98,6 @@ export class SocketHandler {
 
         userSocketIds.delete(socketId);
         if (userSocketIds.size === 0) {
-            console.log('removing user socket ids set');
             this.userToSocketIds.delete(userChatId);
         }
 
