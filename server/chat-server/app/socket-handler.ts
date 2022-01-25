@@ -2,6 +2,7 @@ import { UserMessage } from './message.interface';
 import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { createNewMessage } from './create-message';
+import { MessagesService } from '@app/messages/messages.service';
 
 export class SocketHandler {
     io: Server;
@@ -9,7 +10,7 @@ export class SocketHandler {
     private socketIdToUser = new Map<string, string>(); //
     private currentRoom = new Map<string, string>(); // socket id => roomId 
 
-    constructor(httpServer: HttpServer) {
+    constructor(httpServer: HttpServer, MessagesService: MessagesService) {
         this.io = new Server(httpServer);
     }
 

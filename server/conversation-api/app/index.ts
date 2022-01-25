@@ -7,4 +7,4 @@ app.get('/', (req, res) => {
 });
 
 const PORT = 8080;
-app.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`));
+app.listen(PORT, () => console.log('Conversation api is listenning on port: ${PORT}`));
