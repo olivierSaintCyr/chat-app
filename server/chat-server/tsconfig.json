@@ -9,7 +9,10 @@
       "outDir": "dist",
       "baseUrl": ".",
       "paths": {
-        "*": ["node_modules/*"]
-      }
+        "*": ["node_modules/*"],
+        "@app/*": ["./app/*"]
+      },
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
     },
   }
