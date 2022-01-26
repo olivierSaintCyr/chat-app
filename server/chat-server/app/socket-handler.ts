@@ -24,6 +24,7 @@ export class SocketHandler {
         }).on('connection', (socket) => {
             const token = socket.handshake.headers.auth as string;
             this.connectUser(socket, token);
+            console.log(`user : ${this.mockIdentity(token)}`);
             socket.on('join', (conversationId: string) => {
                 // TODO: look if user has the auth to join this convo
                 socket.join(conversationId);
@@ -115,13 +116,13 @@ export class SocketHandler {
     private mockIdentity(token: string): string {
         switch(token) {
             case '1':
-                return 'abcdef';
+                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e2';
             
             case '2':
-                return 'ghijklm';
+                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e1';
             
             default:
-                return 'nopqrst';
+                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e0';
         }
     }
 }
