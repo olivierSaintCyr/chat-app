@@ -3,6 +3,7 @@ import { Server as HttpServer } from 'http';
 import { Server, Socket } from 'socket.io';
 import { createNewMessage } from './create-message';
 import { LastMessage, MessagesService } from '@app/messages/messages.service';
+import { ConversationsService } from '@app/conversations/conversations.service';
 
 export class SocketHandler {
     io: Server;
@@ -10,7 +11,11 @@ export class SocketHandler {
     private socketIdToUser = new Map<string, string>(); //
     private currentRoom = new Map<string, string>(); // socket id => roomId 
 
-    constructor(httpServer: HttpServer, private messagesService: MessagesService) {
+    constructor(
+        httpServer: HttpServer,
+        private messagesService: MessagesService,
+        private conversationService: ConversationsService
+    ) {
         this.io = new Server(httpServer);
         this.messagesService.subscribe((lastConversationMessage) => {
             this.sendLastMessage(lastConversationMessage);
@@ -24,8 +29,16 @@ export class SocketHandler {
         }).on('connection', (socket) => {
             const token = socket.handshake.headers.auth as string;
             this.connectUser(socket, token);
+            
+            const userId = this.mockIdentity(token);
             console.log(`user : ${this.mockIdentity(token)}`);
-            socket.on('join', (conversationId: string) => {
+
+            socket.on('join', async (conversationId: string) => {
+                const canEnter = await this.conversationService.getPermission(userId, conversationId);
+                if (!canEnter) {
+                    this.sendError('You are not authorized to join this conversation', socket);
+                    return;
+                }
                 // TODO: look if user has the auth to join this convo
                 socket.join(conversationId);
                 this.currentRoom.set(socket.id, conversationId);

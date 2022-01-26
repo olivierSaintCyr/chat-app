@@ -1,6 +1,7 @@
 import { Message } from '@app/message.interface';
 import { MessagesDBService } from '@app/db-services/messages-db.service';
 import { Service } from 'typedi';
+import { ConversationsService } from '@app/conversations/conversations.service';
 
 export interface LastMessage {
     message: Message, // last message sent
@@ -11,19 +12,15 @@ export interface LastMessage {
 export class MessagesService {
     private lastMessageListener: Array<(message: LastMessage) => void> = [];
 
-    constructor(private messageDBService: MessagesDBService) {}
+    constructor(
+        private messageDBService: MessagesDBService,
+        private conversationService: ConversationsService
+    ) {}
 
-    receive(message: Message) {
-        console.log('message received', message.content);
-        // save to db
-        // get user concerned by new message in conversation collection
-        // notify user concerned
+    async receive(message: Message) {
         this.messageDBService.addMessage(message);
-        const to = [
-            '5b6962dd-3f90-4c93-8f61-eabfa4a803e2',
-            '5b6962dd-3f90-4c93-8f61-eabfa4a803e1'
-        ];
-        // update last message in convo
+        const to = await this.conversationService.getUsers(message.conversation);
+        // TODO update last message in convo
         const lastMessage = { message, to };
         this.emitLastMessage(lastMessage);
     }
