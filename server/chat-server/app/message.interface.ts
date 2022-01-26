@@ -5,7 +5,7 @@ export interface UserMessage {
 
 export enum MessageType {
     Image = 'Image',
-    Message = 'Text',
+    Text = 'Text',
 }
 
 export interface Message extends UserMessage {
