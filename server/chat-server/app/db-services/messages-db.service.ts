@@ -13,7 +13,7 @@ export class MessagesDBService {
 
     addMessage(message: Message) {
         const query = this.createNewMessageQuery(message);
-        this.client.execute(query).then((res) => console.log(res));
+        this.client.execute(query);
     }
 
     async getLastestMessages(conversationId: string) {

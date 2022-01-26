@@ -42,6 +42,8 @@ export class SocketHandler {
                 // TODO: look if user has the auth to join this convo
                 socket.join(conversationId);
                 this.currentRoom.set(socket.id, conversationId);
+
+                this.emitLastMessagesInConversation(conversationId, socket);
             });
 
             socket.on('messages', (userMessage: UserMessage) => {
@@ -58,6 +60,8 @@ export class SocketHandler {
                 this.messagesService.receive(message);
                 this.sendMessage(message);
             });
+
+            // TODO implement la
 
             socket.on('leave', () => {
                 const [roomId] = [...socket.rooms.values()];
@@ -118,8 +122,14 @@ export class SocketHandler {
         this.socketIdToUser.delete(socketId);
     }
 
+    private async emitLastMessagesInConversation(conversationId: string, socket: Socket) {
+        const messages = await this.messagesService.getLastMessages(conversationId);
+        const socketId = socket.id;
+        this.io.to(socketId).emit('messages', messages);
+    }
+
     private sendMessage(message: Message) {
-        this.io.to(message.conversation).emit('messages', message);
+        this.io.to(message.conversation).emit('messages', [message]);
     }
 
     private sendError(errorContent: string, socket: Socket) {

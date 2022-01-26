@@ -29,6 +29,10 @@ export class MessagesService {
         this.lastMessageListener.push(onNewMessage);
     }
 
+    async getLastMessages(conversationId: string) {
+        return await this.messageDBService.getLastestMessages(conversationId);
+    }
+
     private emitLastMessage(lastMessage: LastMessage) {
         this.lastMessageListener.forEach((onNewMessage) => {
             onNewMessage(lastMessage);
