@@ -9,11 +9,12 @@ DROP TABLE IF EXISTS chat_data.User;
 DROP TABLE IF EXISTS chat_data.Conversation; 
 
 CREATE TABLE IF NOT EXISTS chat_data.Message (
-    id UUID PRIMARY KEY,
+    id UUID,
     conversation UUID,
     author UUID,
     content text,
-    sent_date timestamp
+    sent_date timestamp,
+    PRIMARY KEY(conversation, sent_date, author, id)
 );
 
 CREATE TABLE IF NOT EXISTS chat_data.User (
