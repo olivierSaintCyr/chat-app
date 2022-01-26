@@ -4,7 +4,7 @@ export const createNewMessage = (userMessage: UserMessage, from: string, roomId:
     console.log(roomId)
     const message = {...userMessage} as Message;
     message.date = new Date();
-    message.from = from;
+    message.author = from;
     message.conversation = roomId;
     return message;
 }
