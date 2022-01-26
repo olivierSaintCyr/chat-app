@@ -8,10 +8,7 @@ import { SocketHandler } from './socket-handler';
 import Container from 'typedi';
 import path from 'path';
 
-console.log(path.join(__dirname, `./.env`));
 dotenv.config({ path: path.join(__dirname, `./.env`)});
-
-console.log(process.env.DB_HOST);
 
 const app = express();
 const server = createServer(app); // TODO: change to https
@@ -24,4 +21,4 @@ app.get('/', (req, res) => {
 });
 
 const PORT = 8080;
-server.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`))
+server.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`));
