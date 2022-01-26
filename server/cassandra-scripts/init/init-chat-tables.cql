@@ -10,6 +10,7 @@ DROP TABLE IF EXISTS chat_data.Conversation;
 
 CREATE TABLE IF NOT EXISTS chat_data.Message (
     id UUID PRIMARY KEY,
+    conversation UUID,
     author UUID,
     content text,
     sent_date timestamp
