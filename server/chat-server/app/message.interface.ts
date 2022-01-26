@@ -11,5 +11,5 @@ export enum MessageType {
 export interface Message extends UserMessage {
     date: Date;
     conversation: string;
-    from: string;
+    author: string;
 }
