@@ -63,7 +63,7 @@ export class ConversationsDBService {
             throw Error('Conversation not found');
         }
         const userUuids = result.rows[0].users;
-        return  userUuids.map((uuid: cassandra.types.Uuid) => uuid.toString);
+        return userUuids.map((uuid: cassandra.types.Uuid) => uuid.toString());
     }
 
     async getUserConversations(userId: string): Promise<Conversation[]> {
