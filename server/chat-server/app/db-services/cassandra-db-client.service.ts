@@ -5,7 +5,8 @@ import * as cassandra from 'cassandra-driver';
 export class CassandraDBClient {
     readonly client = new cassandra.Client({
         contactPoints: [process.env.DB_HOST],
-        localDataCenter: 'datacenter1'
+        localDataCenter: 'datacenter1',
+        keyspace: 'chat_data',
     });
 
     constructor() {

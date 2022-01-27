@@ -18,7 +18,7 @@ export class MessagesDBService {
 
     async getLastestMessages(conversationId: string) {
         const query = `SELECT author, content, sent_date
-            FROM chat_data.message
+            FROM message
             WHERE conversation = ${conversationId}
             ORDER BY sent_date DESC
             LIMIT ${MAX_MESSAGES_PER_QUERY};
@@ -28,7 +28,7 @@ export class MessagesDBService {
 
     async getLastestMessagesFrom(conversationId: string, date: Date) {
         const query = `SELECT author, content, sent_date
-            FROM chat_data.message
+            FROM message
             WHERE conversation = ${conversationId}
             AND sent_date < ${date.getTime()}
             ORDER BY sent_date DESC
@@ -39,7 +39,7 @@ export class MessagesDBService {
 
     async getMessage(messageId: string): Promise<Message> {
         const query = `SELECT author, content, conversation, date 
-            FROM chat_data.message 
+            FROM message 
             WHERE id = ${messageId};`;
         const messages = await this.getMessagesWithQuery(query);
         if (messages.length === 0) {
@@ -67,7 +67,7 @@ export class MessagesDBService {
     }
 
     private createNewMessageQuery(message: Message) {
-        const query = `INSERT INTO chat_data.message (id, conversation, author, content, sent_date) VALUES (
+        const query = `INSERT INTO message (id, conversation, author, content, sent_date) VALUES (
             uuid(),
             ${message.conversation},
             ${message.author},

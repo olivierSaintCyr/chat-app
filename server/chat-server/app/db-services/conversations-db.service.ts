@@ -10,7 +10,7 @@ export class ConversationsDBService {
 
     async getUsersInConversation(conversationId: string): Promise<string[]> {
         const query = `SELECT users
-            FROM chat_data.conversation
+            FROM conversation
             WHERE id = ${conversationId};`;
         const result = await this.client.execute(query);
         if (result.rows.length === 0) {
