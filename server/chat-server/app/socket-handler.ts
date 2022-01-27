@@ -39,6 +39,7 @@ export class SocketHandler {
                     this.sendError('You are not authorized to join this conversation', socket);
                     return;
                 }
+                // TODO look if conversation exists
                 // TODO: look if user has the auth to join this convo
                 socket.join(conversationId);
                 this.currentRoom.set(socket.id, conversationId);
