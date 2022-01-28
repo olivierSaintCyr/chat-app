@@ -1,4 +1,3 @@
-import { Conversation } from '@app/conversation.interface';
 import { ConversationsDBService } from '@app/db-services/conversations-db.service';
 import { Service } from 'typedi';
 
@@ -16,8 +15,9 @@ export class ConversationsService {
         this.conversationDB.create(params);
     }
 
-    delete(conversationId: string) {
-        // TODO maybe not everyone can do it
+    async delete(conversationId: string) {
+        // TODO give this only to admin or a democratic system
+        await this.conversationDB.delete(conversationId);
     }
 
     async addUser(userId: string, conversationId: string) {
