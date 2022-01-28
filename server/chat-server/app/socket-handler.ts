@@ -4,6 +4,7 @@ import { Server, Socket } from 'socket.io';
 import { createNewMessage } from './create-message';
 import { LastMessage, MessagesService } from '@app/messages/messages.service';
 import { ConversationsService } from '@app/conversations/conversations.service';
+import { isUuid } from '@app/utils';
 
 export class SocketHandler {
     io: Server;
@@ -34,6 +35,10 @@ export class SocketHandler {
             console.log(`user : ${this.mockIdentity(token)}`);
 
             socket.on('join', async (conversationId: string) => {
+                if (!isUuid(conversationId)) {
+                    this.sendError('Bad request', socket);
+                    return;
+                }
                 const canEnter = await this.conversationService.getPermission(userId, conversationId);
                 if (!canEnter) {
                     this.sendError('You are not authorized to join this conversation', socket);

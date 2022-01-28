@@ -1,4 +1,3 @@
-import { ConversationCreationParams } from '@app/conversation.interface';
 import { ConversationsService } from '@app/conversations.service';
 import { Router } from 'express';
 

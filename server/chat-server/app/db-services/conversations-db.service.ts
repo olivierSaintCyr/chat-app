@@ -14,7 +14,7 @@ export class ConversationsDBService {
             WHERE id = ${conversationId};`;
         const result = await this.client.execute(query);
         if (result.rows.length === 0) {
-            throw Error('Conversation not found');
+            return [];
         }
         const row = result.rows[0];
         const userIds: string[] = row.users.map((uuid: cassandra.types.Uuid) => uuid.toString());
