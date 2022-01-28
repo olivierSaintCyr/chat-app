@@ -1,5 +1,6 @@
 import { ConversationsService } from '@app/conversations.service';
 import { Router } from 'express';
+import { isUuid } from 'utils';
 
 export class ConversationsController {
     readonly router = Router();
@@ -31,6 +32,7 @@ export class ConversationsController {
         });
 
         this.router.delete('/', async (req, res) => {
+            // TODO enforce security verify right not every one can do this
             const { conversationId } = req.body;
             if (conversationId === undefined) {
                 res.sendStatus(400);
@@ -75,6 +77,7 @@ export class ConversationsController {
         this.router.delete('/users', async (req, res) => {
             // TODO remove removedBy use the auth id instead
             const { conversationId, userId, removedBy } = req.body;
+            // TODO check if conversationId is Uuid
             if (conversationId === undefined
                 || userId === undefined
                 || removedBy === undefined

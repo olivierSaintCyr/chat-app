@@ -77,6 +77,11 @@ export class ConversationsDBService {
         return conversations;
     }
 
+    async delete(conversationId: string) {
+        const query = `DELETE FROM conversation WHERE id = ${conversationId};`;
+        this.client.execute(query);
+    }
+
     private rowToConversation(row: cassandra.types.Row): Conversation {
         const userUuids: cassandra.types.Uuid[] = row.users;
         const users = userUuids.map((uuid) => uuid.toString());

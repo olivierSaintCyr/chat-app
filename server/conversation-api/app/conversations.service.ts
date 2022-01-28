@@ -16,7 +16,7 @@ export class ConversationsService {
     }
 
     async delete(conversationId: string) {
-        // TODO give this only to admin or a democratic system
+        // TODO give this only to admin or a democratic vote system
         await this.conversationDB.delete(conversationId);
     }
 
