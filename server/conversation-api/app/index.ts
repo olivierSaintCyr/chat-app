@@ -6,6 +6,7 @@ import cookieParser from 'cookie-parser';
 import { Container } from 'typedi';
 import { ConversationsService } from '@app/conversations.service';
 import { ConversationsController } from '@app/conversations-controller';
+import { UsersPermissionsService } from '@app/users-permissions.service';
 import path from 'path';
 import dotenv from 'dotenv';
 
@@ -18,7 +19,9 @@ app.use(cookieParser());
 app.use(cors());
 
 const conversationsService = Container.get(ConversationsService);
-const conversationsController = new ConversationsController(conversationsService);
+const usersPermissionsService = Container.get(UsersPermissionsService);
+const conversationsController = new ConversationsController(conversationsService, usersPermissionsService);
+
 app.get('/', (req, res) => {
     res.send('Hello World! welcome to user api');
 });

@@ -26,11 +26,15 @@ export class ConversationsService {
 
     async removeUser(userId: string, conversationId: string) {
         this.conversationDB.removeUser(userId, conversationId);
-        // TODO only user that are in the conversation can kick the person
+        // TODO only user that are in the cbhbhbhbonversation can kick the person
     }
 
     async getUsers(conversationId: string) {
         const users = await this.conversationDB.getUsers(conversationId);
         return users;
+    }
+
+    async getConversations(userId: string) {
+        return this.conversationDB.getUserConversations(userId);
     }
 }

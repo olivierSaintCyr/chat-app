@@ -1,16 +1,27 @@
 import { ConversationsService } from '@app/conversations.service';
+import { UsersPermissionsService } from '@app/users-permissions.service';
 import { Router } from 'express';
-import { isUuid } from 'utils';
 
 export class ConversationsController {
     readonly router = Router();
-    constructor(private conversationService: ConversationsService) {
+    constructor(
+        private conversationService: ConversationsService,
+        private usersPermissions: UsersPermissionsService
+    ) {
         this.setRoutes();
     }
 
     private setRoutes() {
-        this.router.get('/', (req, res) => {
-            res.sendStatus(201);
+        this.router.get('/', async (req, res) => {
+            const { userId } = req.body;
+            console.log(userId)
+            try {
+                const conversations = await this.conversationService.getConversations(userId);
+                res.send(conversations);
+            } catch (e) {
+                console.error(e);
+                res.sendStatus(400)
+            }
         });
 
         this.router.put('/', async (req, res) => {
@@ -59,7 +70,7 @@ export class ConversationsController {
             }
 
             // TODO verify if user adding the new user is in convo
-            const hasRights = await this.isUserHasEditRightsToConversation(addedBy, conversationId);
+            const hasRights = await this.usersPermissions.hasPermissionToView(addedBy, conversationId);
             if (!hasRights) {
                 res.sendStatus(401);
                 return;
@@ -87,7 +98,7 @@ export class ConversationsController {
             }
 
             // TODO verify if user adding the new user is in convo
-            const hasRights = await this.isUserHasEditRightsToConversation(removedBy, conversationId);
+            const hasRights = await this.usersPermissions.hasPermissionToView(removedBy, conversationId);
             if (!hasRights) {
                 res.sendStatus(401);
                 return;
@@ -101,17 +112,5 @@ export class ConversationsController {
                 res.sendStatus(400);
             }
         });
-    }
-
-    private async isUserHasEditRightsToConversation(userId: string, conversationId: string): Promise<boolean> {
-        try {
-            const users = await this.conversationService.getUsers(conversationId);
-            console.log(users);
-            console.log(users.find((user) => user === userId));
-            const userInConvo = users.find((user) => user === userId) !== undefined;
-            return userInConvo;
-        } catch (e) {
-            return false;
-        }
     }
 }

@@ -67,7 +67,7 @@ export class ConversationsDBService {
     }
 
     async getUserConversations(userId: string): Promise<Conversation[]> {
-        const query = `SELECT * FROM conversation WHERE users CONTAINS ${userId};`;
+        const query = `SELECT * FROM conversation WHERE users CONTAINS ${userId} ALLOW FILTERING;`;
         const result = await this.client.execute(query);
         if (result.rows.length == 0) {
             return [];
