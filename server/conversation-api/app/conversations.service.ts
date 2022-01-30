@@ -25,7 +25,7 @@ export class ConversationsService {
     }
 
     async removeUser(userId: string, conversationId: string) {
-        this.conversationDB.removeUser(userId, conversationId);
+        await this.conversationDB.removeUser(userId, conversationId);
         // TODO only user that are in the conversation can kick the person
     }
 
