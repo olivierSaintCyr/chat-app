@@ -1,6 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
+import { Message } from '@app/message.interface';
 @Service()
 export class ConversationsDBService {
     constructor(private cassandraDBClient: CassandraDBClient) {}
@@ -19,5 +20,14 @@ export class ConversationsDBService {
         const row = result.rows[0];
         const userIds: string[] = row.users.map((uuid: cassandra.types.Uuid) => uuid.toString());
         return userIds;
+    }
+
+    async updateLastMessage(message: Message, messageId: string) {
+        const query = `
+            UPDATE conversation 
+            SET last_message = ${messageId}, last_message_date = ${message.date.getTime()}
+            WHERE id = ${message.conversation};
+        `;
+        await this.client.execute(query);
     }
 }

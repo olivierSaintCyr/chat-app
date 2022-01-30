@@ -14,7 +14,7 @@ CREATE TABLE IF NOT EXISTS chat_data.Message (
     author UUID,
     content text,
     sent_date timestamp,
-    PRIMARY KEY(conversation, sent_date, author, id)
+    PRIMARY KEY(conversation, sent_date, id)
 );
 
 CREATE TABLE IF NOT EXISTS chat_data.User (
@@ -26,8 +26,11 @@ CREATE TABLE IF NOT EXISTS chat_data.User (
 );
 
 CREATE TABLE IF NOT EXISTS chat_data.Conversation (
-    id UUID PRIMARY KEY,
+    id UUID,
+    last_message_date timestamp,
+    last_message UUID,
     users set<UUID>,
     title text,
-    icon text
+    icon text,
+    PRIMARY KEY(id)
 );

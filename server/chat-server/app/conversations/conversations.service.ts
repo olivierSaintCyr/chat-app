@@ -1,4 +1,5 @@
 import { ConversationsDBService } from '@app/db-services/conversations-db.service';
+import { Message } from '@app/message.interface';
 import { Service } from 'typedi';
 
 @Service()
@@ -17,5 +18,9 @@ export class ConversationsService {
             }
         }
         return false;
+    }
+
+    async updateLastMessage(message: Message, messageId: string) {
+        await this.conversationsDBService.updateLastMessage(message, messageId);
     }
 }

@@ -1,6 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Message, MessageType } from '@app/message.interface';
 import { Service } from 'typedi';
+import * as cassandra from 'cassandra-driver';
 
 export const MAX_MESSAGES_PER_QUERY = 20;
 @Service()
@@ -12,8 +13,16 @@ export class MessagesDBService {
     }
 
     addMessage(message: Message) {
-        const query = this.createNewMessageQuery(message);
+        const uuid = cassandra.types.Uuid.random();
+        const query = `INSERT INTO message (id, conversation, author, content, sent_date) VALUES (
+            ${uuid},
+            ${message.conversation},
+            ${message.author},
+            '${message.content}',
+            ${message.date.getTime()}
+        )`;
         this.client.execute(query);
+        return uuid.toString();
     }
 
     async getLastestMessages(conversationId: string) {

@@ -1,4 +1,4 @@
-import { Conversation, ConversationCreationParams } from '@app/conversation.interface';
+import { Conversation, ConversationCreationParams, ConversationRow } from '@app/conversation.interface';
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
@@ -12,14 +12,28 @@ export class ConversationsDBService {
 
     async create(params: ConversationCreationParams) {
         const uuid = cassandra.types.Uuid.random();
-        const query = `INSERT INTO conversation (id, icon, title, users) VALUES (
+        const now = new Date();
+        const query = `INSERT INTO conversation (id, icon, title, users, last_message_date) VALUES (
             ${uuid},
             '${params.icon}',
             '${params.title}',
-            {${params.users.join(',')}}
+            {${params.users.join(',')}},
+            ${now.getTime()}
         );`;
        await this.client.execute(query);
        return uuid.toString();
+    }
+
+    async getConversation(conversationId: string) {
+        const query = `SELECT * FROM conversation WHERE id = ${conversationId};`;
+        console.log(query);
+        const result = await this.client.execute(query);
+        if (result.rows.length === 0) {
+            throw Error(`No conversation found with id: ${conversationId}`);
+        }
+
+        const conversationRow = this.rowToConversationRow(result.rows[0]);
+        return conversationRow;
     }
 
     async addUser(userId: string, conversationId: string) {
@@ -101,6 +115,19 @@ export class ConversationsDBService {
             title: row.title,
             icon: row.icon,
             users
+        };
+    }
+
+    private rowToConversationRow(row: cassandra.types.Row): ConversationRow {
+        const userUuids: cassandra.types.Uuid[] = row.users;
+        const users = userUuids.map((uuid) => uuid.toString());
+        return {
+            id: row.id,
+            title: row.title,
+            icon: row.icon,
+            users,
+            lastMessageDate: row.last_message_date,
+            lastMessageId: row.last_message
         };
     }
 }

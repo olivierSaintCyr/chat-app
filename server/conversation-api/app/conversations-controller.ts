@@ -24,6 +24,25 @@ export class ConversationsController {
                 return res.sendStatus(400)
             }
         });
+        // TODO find better name and refactor for better perf
+        this.router.get('/lastActive', async (req, res) => {
+            const { userId } = req.body;
+            if (userId === undefined) {
+                return res.sendStatus(400);
+            }
+
+            if (!isUuid(userId)) {
+                return res.sendStatus(400);
+            }
+
+            try {
+                const activeConversations = await this.conversationService.getLastActiveConversations(userId);
+                return res.send(activeConversations);
+            } catch (e) {
+                console.log('error accessing active conversation', (e as Error).message);
+                return res.sendStatus(400);
+            }
+        });
 
         this.router.put('/', async (req, res) => {
             // TODO validate body

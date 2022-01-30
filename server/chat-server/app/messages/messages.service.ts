@@ -18,7 +18,8 @@ export class MessagesService {
     ) {}
 
     async receive(message: Message) {
-        this.messageDBService.addMessage(message);
+        const messageId  = await this.messageDBService.addMessage(message);
+        this.conversationService.updateLastMessage(message, messageId);
         const to = await this.conversationService.getUsers(message.conversation);
         // TODO update last message in convo
         const lastMessage = { message, to };

@@ -1,6 +1,6 @@
-import { Conversation } from '@app/conversation.interface';
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
+import * as cassandra from 'cassandra-driver';
 
 @Service()
 export class UsersDBService {
@@ -9,17 +9,18 @@ export class UsersDBService {
         return this.dbClient.client;
     }
 
-    async getConversations(userId: string): Promise<Conversation[]> {
+    async getConversations(userId: string): Promise<string[]> {
         const query = `SELECT conversations FROM user WHERE id = ${userId}`;
         const result = await this.client.execute(query);
         if (result.rows.length === 0) {
             throw Error(`No user found with id: ${userId}`);
         }
 
-        const conversations: Conversation[] = result.rows[0].conversations;
-        if (conversations === null) {
+        const uuids: cassandra.types.Uuid[] = result.rows[0].conversations;
+        if (uuids === null) {
             return [];
         }
+        const conversations = uuids.map((uuid) => uuid.toString());
         return conversations;
     }
 
