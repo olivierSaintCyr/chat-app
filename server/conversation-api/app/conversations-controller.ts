@@ -16,13 +16,12 @@ export class ConversationsController {
         // TODO REFACTOR use hasRight middle ware
         this.router.get('/', async (req, res) => {
             const { userId } = req.body;
-            console.log(userId)
             try {
                 const conversations = await this.conversationService.getConversations(userId);
-                res.send(conversations);
+                return res.send(conversations);
             } catch (e) {
                 console.error(e);
-                res.sendStatus(400)
+                return res.sendStatus(400)
             }
         });
 
@@ -32,15 +31,14 @@ export class ConversationsController {
             // a user can only add its friends
             const { users, title } = req.body;
             if (users === undefined || title === undefined) {
-                res.sendStatus(400);
-                return;
+                return res.sendStatus(400);
             }
             // TODO cannot add inexisting user in conversation
             try {
                 await this.conversationService.create(users, title);
-                res.sendStatus(200);
+                return res.sendStatus(200);
             } catch (e) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
             }
         });
 
@@ -49,26 +47,25 @@ export class ConversationsController {
             const { conversationId, newTitle, userId } = req.body;
             console.log(conversationId, newTitle, userId);
             if (conversationId === undefined || newTitle === undefined) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
                 return;
             }
 
             if (!isUuid(conversationId)) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
                 return;
             }
             const hasRight = this.usersPermissions.hasPermissionToEdit(userId, conversationId);
             if (!hasRight) {
-                res.sendStatus(401);
-                return;
+                return res.sendStatus(401);
             }
 
             try {
                 await this.conversationService.changeTitle(newTitle, conversationId);
-                res.sendStatus(200);
+                return res.sendStatus(200);
             } catch (e) {
                 console.log('error', (e as Error).message);
-                res.sendStatus(400);
+                return res.sendStatus(400);
             }
         });
 
@@ -76,15 +73,15 @@ export class ConversationsController {
             // TODO enforce security verify right not every one can do this
             const { conversationId } = req.body;
             if (conversationId === undefined) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
                 return;
             }
             // TODO remove this scope for common user
             try {
                 await this.conversationService.delete(conversationId);
-                res.sendStatus(200);
+                return res.sendStatus(200);
             } catch (e) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
             }
         });
         
@@ -95,23 +92,21 @@ export class ConversationsController {
                 || userId === undefined
                 || addedBy === undefined
             ) {
-                res.sendStatus(400);
-                return;
+                return res.sendStatus(400);
             }
 
             // TODO verify if user adding the new user is in convo
             const hasRights = await this.usersPermissions.hasPermissionToView(addedBy, conversationId);
             if (!hasRights) {
-                res.sendStatus(401);
-                return;
+                return res.sendStatus(401);
             }
 
             // TODO verify if friends
             try {
                 await this.conversationService.addUser(userId, conversationId);
-                res.sendStatus(200);
+                return res.sendStatus(200);
             } catch (e) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
             }
         });
 
@@ -123,23 +118,40 @@ export class ConversationsController {
                 || userId === undefined
                 || removedBy === undefined
             ) {
-                res.sendStatus(400);
-                return;
+                return res.sendStatus(400);
             }
 
             // TODO verify if user adding the new user is in convo
             const hasRights = await this.usersPermissions.hasPermissionToView(removedBy, conversationId);
             if (!hasRights) {
-                res.sendStatus(401);
-                return;
+                return res.sendStatus(401);
             }
 
             // TODO verify if friends
             try {
                 await this.conversationService.removeUser(userId, conversationId);
-                res.sendStatus(200);
+                return res.sendStatus(200);
             } catch (e) {
-                res.sendStatus(400);
+                return res.sendStatus(400);
+            }
+        });
+
+        this.router.post('/quit', async (req, res) => {
+            // TODO replace userId by userId after auth
+            const { conversationId, userId } = req.body;
+            if (userId === undefined || conversationId === undefined) {
+                return res.sendStatus(400);
+            }
+
+            if (!isUuid(userId) || !isUuid(conversationId)) {
+                return res.sendStatus(400);
+            }
+
+            try {
+                await this.conversationService.removeUser(userId, conversationId);
+                return res.sendStatus(200);
+            } catch (e) {
+                return res.sendStatus(400);
             }
         });
     }
