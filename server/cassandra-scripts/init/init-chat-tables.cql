@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS chat_data.User (
     id UUID PRIMARY KEY,
     name text,
     image_url text,
-    friends set<UUID>
+    friends set<UUID>,
+    conversations set<UUID>
 );
 
 CREATE TABLE IF NOT EXISTS chat_data.Conversation (

@@ -11,13 +11,15 @@ export class ConversationsDBService {
     }
 
     async create(params: ConversationCreationParams) {
+        const uuid = cassandra.types.Uuid.random();
         const query = `INSERT INTO conversation (id, icon, title, users) VALUES (
-            uuid(),
+            ${uuid},
             '${params.icon}',
             '${params.title}',
             {${params.users.join(',')}}
         );`;
-       this.client.execute(query);
+       await this.client.execute(query);
+       return uuid.toString();
     }
 
     async addUser(userId: string, conversationId: string) {
