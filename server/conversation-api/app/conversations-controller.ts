@@ -1,5 +1,6 @@
 import { ConversationsService } from '@app/conversations.service';
 import { UsersPermissionsService } from '@app/users-permissions.service';
+import { isUuid } from '@app/utils';
 import { Router } from 'express';
 
 export class ConversationsController {
@@ -12,6 +13,7 @@ export class ConversationsController {
     }
 
     private setRoutes() {
+        // TODO REFACTOR use hasRight middle ware
         this.router.get('/', async (req, res) => {
             const { userId } = req.body;
             console.log(userId)
@@ -38,6 +40,34 @@ export class ConversationsController {
                 await this.conversationService.create(users, title);
                 res.sendStatus(200);
             } catch (e) {
+                res.sendStatus(400);
+            }
+        });
+
+        this.router.post('/', async (req, res) => {
+            // TODO REMOVE userId from body after auth 
+            const { conversationId, newTitle, userId } = req.body;
+            console.log(conversationId, newTitle, userId);
+            if (conversationId === undefined || newTitle === undefined) {
+                res.sendStatus(400);
+                return;
+            }
+
+            if (!isUuid(conversationId)) {
+                res.sendStatus(400);
+                return;
+            }
+            const hasRight = this.usersPermissions.hasPermissionToEdit(userId, conversationId);
+            if (!hasRight) {
+                res.sendStatus(401);
+                return;
+            }
+
+            try {
+                await this.conversationService.changeTitle(newTitle, conversationId);
+                res.sendStatus(200);
+            } catch (e) {
+                console.log('error', (e as Error).message);
                 res.sendStatus(400);
             }
         });

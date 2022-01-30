@@ -82,6 +82,15 @@ export class ConversationsDBService {
         this.client.execute(query);
     }
 
+    async updateTitle(title: string, conversationId: string) {
+        const query = `UPDATE conversation 
+            SET title = '${title}'
+            WHERE id = ${conversationId} IF EXISTS;
+        `;
+        const response = await this.client.execute(query);
+        console.log(response);
+    }
+
     private rowToConversation(row: cassandra.types.Row): Conversation {
         const userUuids: cassandra.types.Uuid[] = row.users;
         const users = userUuids.map((uuid) => uuid.toString());
