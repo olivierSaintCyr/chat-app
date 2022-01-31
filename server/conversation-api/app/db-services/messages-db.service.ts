@@ -22,7 +22,6 @@ export class MessageDBService {
             AND sent_date = ${params.sentDate.getTime()}
             AND id = ${params.id};
         `;
-        console.log(query);
         const result = await this.client.execute(query);
         if (result.rows.length === 0) {
             throw Error(`No message has id : ${params.id}`);
