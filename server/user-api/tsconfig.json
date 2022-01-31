@@ -3,13 +3,17 @@
       "module": "commonjs",
       "esModuleInterop": true,
       "target": "es6",
+      "types": ["reflect-metadata"],
       "noImplicitAny": true,
       "moduleResolution": "node",
       "sourceMap": true,
       "outDir": "dist",
-      "baseUrl": ".",
+      "baseUrl": "./",
+      "allowSyntheticDefaultImports": true,
       "paths": {
-        "*": ["node_modules/*"]
-      }
+        "@app/*": ["./app/*"]
+      },
+      "emitDecoratorMetadata": true,
+      "experimentalDecorators": true,
     },
   }

@@ -5,29 +5,38 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc & node .",
-    "dev": "tsc -w & nodemon .",
+    "start": "tsc & cp app/environments/.env.prod dist/.env & node .",
+    "dev": "tsc -w & cp app/environments/.env.dev dist/.env & nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "_moduleAliases": {
+    "@app": "dist/"
+  },
   "dependencies": {
     "@types/jsonwebtoken": "^8.5.7",
     "@types/jwk-to-pem": "^2.0.1",
+    "cassandra-driver": "^4.6.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",
     "dotenv": "^11.0.0",
     "express": "^4.17.2",
     "jsonwebtoken": "^8.5.1",
     "jwk-to-pem": "^2.0.5",
-    "node": "^17.3.1"
+    "module-alias": "^2.2.2",
+    "node": "^17.3.1",
+    "reflect-metadata": "^0.1.13",
+    "socket.io": "^4.4.1",
+    "typedi": "^0.10.0"
   },
   "devDependencies": {
     "@types/cookie-parser": "^1.4.2",
     "@types/cors": "^2.8.12",
     "@types/express": "^4.17.13",
     "@types/node": "^17.0.8",
+    "eslint": "^8.7.0",
     "nodemon": "^2.0.15",
     "typescript": "^4.5.4"
   }
