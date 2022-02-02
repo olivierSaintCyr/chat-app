@@ -5,8 +5,12 @@ import { Service } from 'typedi';
 export class UsersService {
     constructor(private usersDB: UsersDBService) {}
 
-    async getUser(userId: string) {
-        return await this.usersDB.getUser(userId);
+    async getPrivateUser(userId: string) {
+        return await this.usersDB.getPrivateUser(userId);
+    }
+
+    async getPublicUser(userId: string) {
+        return await this.usersDB.getPublicUser(userId);
     }
 
     async addFriend(userId: string, newFriendId: string) {

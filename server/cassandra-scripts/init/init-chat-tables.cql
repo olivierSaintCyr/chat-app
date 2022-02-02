@@ -6,7 +6,8 @@ CREATE KEYSPACE IF NOT EXISTS chat_data
 
 DROP TABLE IF EXISTS chat_data.Message;
 DROP TABLE IF EXISTS chat_data.User;
-DROP TABLE IF EXISTS chat_data.Conversation; 
+DROP TABLE IF EXISTS chat_data.Conversation;
+DROP TABLE IF EXISTS chat_data.FriendRequest;
 
 CREATE TABLE IF NOT EXISTS chat_data.Message (
     id UUID,
@@ -33,4 +34,10 @@ CREATE TABLE IF NOT EXISTS chat_data.Conversation (
     title text,
     icon text,
     PRIMARY KEY(id)
+);
+
+CREATE TABLE IF NOT EXISTS chat_data.FriendRequest (
+    from_id UUID,
+    to_id UUID,
+    PRIMARY Key (from_id, to_id)
 );
