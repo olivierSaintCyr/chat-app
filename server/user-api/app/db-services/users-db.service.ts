@@ -39,6 +39,15 @@ export class UsersDBService  {
         await this.client.execute(query);
     }
 
+    async removeFriendFromUser(userId: string, friendId: string) {
+        const query = `
+            UPDATE user 
+            SET friends = friends - {${friendId}} 
+            WHERE id = ${userId};
+        `;
+        await this.client.execute(query);
+    }
+
     private rowToPublicUser(row: cassandra.types.Row): PublicUser {
         const friends = row.friends !== null ? 
             row.friends.map((uuid: cassandra.types.Uuid) => uuid.toString()) 
