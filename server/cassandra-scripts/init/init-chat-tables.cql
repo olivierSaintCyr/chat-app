@@ -39,5 +39,5 @@ CREATE TABLE IF NOT EXISTS chat_data.Conversation (
 CREATE TABLE IF NOT EXISTS chat_data.FriendRequest (
     from_id UUID,
     to_id UUID,
-    PRIMARY Key (from_id, to_id)
+    PRIMARY Key (to_id, from_id)
 );
