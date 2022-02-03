@@ -36,6 +36,7 @@ export class UsersController {
         });
 
         this.router.post('/:userId/friend-request', async (req, res) => {
+            // TODO cant if already friends
             const friendToAdd = req.params.userId;
             // TODO to get with auth
             const userId = req.body.userId;
@@ -77,11 +78,33 @@ export class UsersController {
             }
 
             try {
-                this.friendReqService.isAlreadySent(userId, friendToAdd);
-                return res.sendStatus(200);
+                const isAlreadySent = await this.friendReqService.isAlreadySent(userId, friendToAdd);
+                return res.send({ isAlreadySent });
             } catch (e) {
                 return res.sendStatus(401);
             }
         });
+
+        // cancel 
+        this.router.delete('/:userId/friend-request', async (req, res) => {
+            const friendToAdd = req.params.userId;
+            // TODO to get with auth
+            const userId = req.body.userId;
+            if (userId === friendToAdd) {
+                return res.sendStatus(400);
+            }
+
+            if (userId === undefined || friendToAdd === undefined) {
+                return res.sendStatus(400);
+            }
+
+            try {
+                await this.friendReqService.cancel(userId, friendToAdd);
+                return res.sendStatus(200);
+            } catch (e) {
+                return res.sendStatus(400);
+            }
+        })
+        // TODO MAYBE DO A ME ROUTER TO GET INCOMING REQUEST AND DELETE FRIEND
     }
 }
