@@ -16,4 +16,8 @@ export class UsersService {
     async addFriend(userId: string, newFriendId: string) {
         await this.usersDB.addFriendToUser(userId, newFriendId);
     }
+
+    async removeFriend(userId: string, friendId: string) {
+        await this.usersDB.removeFriendFromUser(userId, friendId);
+    }
 }
