@@ -9,23 +9,34 @@ export class FriendRequestsDB  {
         return this.clientDB.client;
     }
 
-    async send(from: string, to: string) {
-        const query = `INSERT INTO FriendRequest (to_id, from_id) VALUES (
+    async insert(from: string, to: string) {
+        const query = `INSERT INTO friendrequest (to_id, from_id) VALUES (
             ${to},
             ${from}
         ) IF NOT EXISTS;`;
-        const response = await this.client.execute(query);
-        console.log(response.wasApplied);
+        await this.client.execute(query);
     }
 
-    async isAlreadySent(from: string, to: string) {
+    async isAlreadySent(from: string, to: string): Promise<boolean> {
         const query = `
             SELECT COUNT(*) 
-            FROM FriendRequest
+            FROM friendrequest
             WHERE to_id = ${to}
             AND from_id = ${from};
         `;
         const result = await this.client.execute(query);
-        console.log(result.rows);
+        const count = result.rows[0].count as cassandra.types.Long;
+        return count.toNumber() === 1;
+    }
+
+    async delete(from: string, to: string) {
+        const query = `
+            DELETE FROM friendrequest
+            WHERE to_id = ${to} and from_id = ${from}
+            IF EXISTS;`;
+        const response = await this.client.execute(query);
+        if (!response.wasApplied()) {
+            throw Error(`No Friend request with for to: ${to} from : ${from}`)
+        }
     }
 }
