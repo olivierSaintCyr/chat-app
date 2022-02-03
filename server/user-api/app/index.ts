@@ -9,6 +9,7 @@ import { UsersService } from '@app/users.service';
 import { UsersController } from '@app/users-controller';
 import Container from 'typedi';
 import { FriendRequestsService } from '@app/friend-requests.service';
+import { MeController } from '@app/me-controller-controller';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -24,9 +25,12 @@ app.get('/', (req, res) => {
 
 const usersService = Container.get(UsersService);
 const friendRequestService = Container.get(FriendRequestsService);
-const usersController = new UsersController(usersService, friendRequestService);
 
+const usersController = new UsersController(usersService, friendRequestService);
 app.use('/users', usersController.router);
+
+const meController = new MeController(usersService, friendRequestService);
+app.use('/me', meController.router);
 
 const PORT = 8083;
 app.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`));

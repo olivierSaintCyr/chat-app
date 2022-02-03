@@ -1,6 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
+import { FriendRequest } from '@app/friend-request.interface';
 
 @Service()
 export class FriendRequestsDB  {
@@ -38,5 +39,30 @@ export class FriendRequestsDB  {
         if (!response.wasApplied()) {
             throw Error(`No Friend request with for to: ${to} from : ${from}`)
         }
+    }
+
+    async getFriendRequests(userId: string): Promise<FriendRequest[]> {
+        const query = `
+            SELECT * FROM friendrequest WHERE to_id = ${userId}
+        `;
+        const result = await this.client.execute(query);
+        if (result.rows.length === 0) {
+            return [];
+        }
+        const rows = result.rows;
+        const friendRequests = this.rowsToFriendRequests(rows);
+        return friendRequests
+    }
+
+    private rowsToFriendRequests(rows: cassandra.types.Row[]): FriendRequest[] {
+        const friendRequest = rows.map((row) => {
+            const from = row.from_id.toString();
+            const to = row.to_id.toString();
+            return {
+                from,
+                to,
+            }
+        });
+        return friendRequest;
     }
 }

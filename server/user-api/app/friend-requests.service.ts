@@ -30,6 +30,10 @@ export class FriendRequestsService {
         return await this.friendReqDB.isAlreadySent(from, to);
     }
 
+    async getFriendRequests(userId: string) {
+        return await this.friendReqDB.getFriendRequests(userId);
+    }
+
     private async addFriend(from: string, to: string) {
         this.userService.addFriend(from, to);
         this.userService.addFriend(to, from);

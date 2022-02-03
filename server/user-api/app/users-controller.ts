@@ -14,7 +14,6 @@ export class UsersController {
 
     private setRoutes() {
         this.router.get('/:userId', async (req, res) => {
-
             const userId = req.params.userId;
             if (userId === undefined) {
                 return res.sendStatus(400);
@@ -27,7 +26,7 @@ export class UsersController {
             try {
                 // TODO turn it into public user for privacy purposes Get private only
                 // if the userId is the searched id
-                const user = await this.usersService.getPrivateUser(userId);
+                const user = await this.usersService.getPublicUser(userId);
                 return res.send(user);
             } catch (e) {
                 console.error(e);
@@ -104,7 +103,9 @@ export class UsersController {
             } catch (e) {
                 return res.sendStatus(400);
             }
-        })
+        });
         // TODO MAYBE DO A ME ROUTER TO GET INCOMING REQUEST AND DELETE FRIEND
+
+        
     }
 }
