@@ -69,6 +69,6 @@ export class MeController {
             } catch (e) {
                 return res.sendStatus(400);
             }
-        // });
+        });
     }
 }
