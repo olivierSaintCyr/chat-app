@@ -4,7 +4,7 @@ import * as cassandra from 'cassandra-driver';
 @Service()
 export class CassandraDBClient {
     readonly client = new cassandra.Client({
-        contactPoints: [process.env.DB_HOST],
+        contactPoints: [process.env.DB_HOST as string],
         localDataCenter: 'datacenter1',
         keyspace: 'chat_data',
     });

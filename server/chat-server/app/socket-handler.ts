@@ -62,6 +62,10 @@ export class SocketHandler {
                     return;
                 }
                 const user  = this.socketIdToUser.get(socketId);
+                if (!user) {
+                    this.sendError('An error occur please rejoin', socket);
+                    return;
+                }
                 const message = createNewMessage(userMessage, user, conversationId);
                 this.messagesService.receive(message);
                 this.sendMessage(message);
