@@ -88,7 +88,7 @@ export class ConversationsService {
 
     private async getLastMessage(conversationRow: ConversationRow): Promise<null | Message> {
         const messageId = conversationRow.lastMessageId;
-        if (conversationRow.lastMessageId === null) {
+        if (messageId === null) {
             return null;
         }
         const sentDate = new Date(conversationRow.lastMessageDate);
