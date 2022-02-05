@@ -48,6 +48,15 @@ export class UsersDBService  {
         await this.client.execute(query);
     }
 
+    async changeName(userId: string, newName: string) {
+        const query = `
+            UPDATE user
+            SET name = '${newName}'
+            WHERE id = ${userId};
+        `;
+        await this.client.execute(query);
+    }
+
     private rowToPublicUser(row: cassandra.types.Row): PublicUser {
         const friends = row.friends !== null ? 
             row.friends.map((uuid: cassandra.types.Uuid) => uuid.toString()) 

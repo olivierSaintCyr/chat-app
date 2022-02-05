@@ -20,4 +20,8 @@ export class UsersService {
     async removeFriend(userId: string, friendId: string) {
         await this.usersDB.removeFriendFromUser(userId, friendId);
     }
+
+    async changeName(userId: string, newName: string) {
+        await this.usersDB.changeName(userId, newName);
+    }
 }

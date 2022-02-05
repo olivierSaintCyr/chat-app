@@ -70,5 +70,25 @@ export class MeController {
                 return res.sendStatus(400);
             }
         });
+
+        this.router.post('/name', async (req, res) => {
+            const {userId, newName } = req.body;
+            console.log(userId, newName);
+            if (newName === undefined || userId === undefined) {
+                return res.sendStatus(400);
+            }
+
+            if (!isUuid(userId)) {
+                return res.sendStatus(400);
+            }
+
+            try {
+                await this.usersService.changeName(userId, newName);
+                return res.sendStatus(200);
+            } catch (e) {
+                console.error(e);
+                return res.sendStatus(400); 
+            }
+        });
     }
 }
