@@ -1,8 +1,11 @@
+import { JWTValidatorService } from '@app/auth/jwt-aws-validator';
 import express from 'express';
 import { Service } from 'typedi';
 
 @Service()
 export class AuthService {
+    constructor(private jwtValidator: JWTValidatorService) {}
+
     get middleware() {
         return async (req: express.Request,
             res: express.Response,
