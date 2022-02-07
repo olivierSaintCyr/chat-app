@@ -1,3 +1,4 @@
 data
+environments
 .env.prod
 production.env
