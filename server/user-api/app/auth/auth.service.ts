@@ -14,7 +14,6 @@ export class AuthService {
             }
 
             const [ authScheme, token ] = authHeader.split(' ');
-            console.log('token', token);
             if (authScheme !== 'Bearer') {
                 return res.sendStatus(401);
             }
