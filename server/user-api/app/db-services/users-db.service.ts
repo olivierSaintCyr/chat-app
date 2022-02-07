@@ -1,7 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
-import { PrivateUser, PublicUser } from '@app/user.interface';
+import { BaseUser, PrivateUser, PublicUser } from '@app/user.interface';
 
 @Service()
 export class UsersDBService  {
@@ -53,6 +53,19 @@ export class UsersDBService  {
             UPDATE user
             SET name = '${newName}'
             WHERE id = ${userId};
+        `;
+        await this.client.execute(query);
+    }
+
+    async createUser(baseUser: BaseUser) {
+        const query = `
+            INSERT INTO user (id, name, image_url, friends, conversations) VALUES (
+                ${baseUser.id},
+                '${baseUser.name}',
+                '${baseUser.imageUrl}',
+                {},
+                {}
+            );
         `;
         await this.client.execute(query);
     }

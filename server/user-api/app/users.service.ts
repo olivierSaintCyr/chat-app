@@ -1,4 +1,5 @@
 import { UsersDBService } from '@app/db-services/users-db.service';
+import { BaseUser } from '@app/user.interface';
 import { Service } from 'typedi';
 
 @Service()
@@ -23,5 +24,9 @@ export class UsersService {
 
     async changeName(userId: string, newName: string) {
         await this.usersDB.changeName(userId, newName);
+    }
+
+    async createUser(baseUser: BaseUser) {
+        await this.usersDB.createUser(baseUser);
     }
 }
