@@ -31,4 +31,8 @@ export class UsersService {
     async createUser(baseUser: BaseUser) {
         await this.usersDB.createUser(baseUser);
     }
+
+    async areTheyFriends(userId: string, friendId: string) {
+        return await this.usersDB.isFriendOf(userId, friendId);
+    }
 }

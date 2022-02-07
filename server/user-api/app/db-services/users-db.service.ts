@@ -77,7 +77,19 @@ export class UsersDBService  {
             WHERE id = ${userId};
         `;
         const result = await this.client.execute(query);
-        console.log(result.rows[0]);
+        const count: cassandra.types.Long = result.rows[0].count;
+        return count.toNumber() === 1;
+    }
+
+    async isFriendOf(userId: string, friendId: string) {
+        const query = `
+            SELECT COUNT(*)
+            FROM user
+            WHERE id = ${userId}
+            AND friends CONTAINS ${friendId}
+            ALLOW FILTERING;
+        `;
+        const result = await this.client.execute(query);
         const count: cassandra.types.Long = result.rows[0].count;
         return count.toNumber() === 1;
     }

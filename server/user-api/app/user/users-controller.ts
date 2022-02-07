@@ -52,10 +52,10 @@ export class UsersController {
             }
 
             try {
-                this.friendReqService.send(userId, friendToAdd);
+                await this.friendReqService.send(userId, friendToAdd);
                 return res.sendStatus(200);
             } catch (e) {
-                return res.sendStatus(401);
+                return res.sendStatus(400);
             }
         });
 
@@ -78,7 +78,7 @@ export class UsersController {
                 const isAlreadySent = await this.friendReqService.isAlreadySent(userId, friendToAdd);
                 return res.send({ isAlreadySent });
             } catch (e) {
-                return res.sendStatus(401);
+                return res.sendStatus(400);
             }
         });
 

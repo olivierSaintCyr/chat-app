@@ -10,6 +10,10 @@ export class FriendRequestsService {
     ) {}
 
     async send(from: string, to: string) {
+        const alreadyFriends = await this.userService.areTheyFriends(from, to);
+        if (alreadyFriends) {
+            throw Error(`User ${from} already friend with ${to}`);
+        }
         const alreadyReceived = await this.friendReqDB.isAlreadySent(to, from);
         if (alreadyReceived) {
             await this.addFriend(from, to);
