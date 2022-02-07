@@ -65,7 +65,7 @@ export class UsersDBService  {
                 '${baseUser.imageUrl}',
                 {},
                 {}
-            );
+            ) IF NOT EXISTS;
         `;
         await this.client.execute(query);
     }

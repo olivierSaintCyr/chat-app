@@ -10,6 +10,7 @@ import { UsersController } from '@app/users-controller';
 import Container from 'typedi';
 import { FriendRequestsService } from '@app/friend-requests.service';
 import { MeController } from '@app/me-controller-controller';
+import { AuthService } from '@app/auth/auth.service';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -22,6 +23,9 @@ app.use(cors());
 app.get('/', (req, res) => {
     res.send('Hello World! welcome to user api');
 });
+
+const authService = Container.get(AuthService);
+app.use(authService.middleware);
 
 const usersService = Container.get(UsersService);
 const friendRequestService = Container.get(FriendRequestsService);

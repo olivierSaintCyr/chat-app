@@ -16,7 +16,7 @@ export class MeController {
     private setRoutes() {
         this.router.get('/', async (req, res) => {
             // TODO get with auth
-            const userId = req.body.userId;
+            const { userId } = res.locals;
             if (userId === undefined) {
                 return res.sendStatus(400);
             }
@@ -35,7 +35,8 @@ export class MeController {
 
         this.router.post('/', async (req, res) => {
             // TODO get userId from auth middle ware
-            const { name, userId } = req.body;
+            const { userId } = res.locals;
+            const { name } = req.body;
             console.log(name, userId);
             if (name === undefined) {
                 return res.sendStatus(400);
@@ -56,7 +57,7 @@ export class MeController {
 
         this.router.get('/friend-requests', async (req, res) => {
             // TODO get with auth
-            const userId = req.body.userId;
+            const { userId } = res.locals;
             if (userId === undefined) {
                 return res.sendStatus(400);
             }
@@ -75,8 +76,9 @@ export class MeController {
 
         this.router.delete('/friends', async (req, res) => {
             // TODO get with auth
-            const userId = req.body.myUserId;
-            const friendId = req.body.userId;
+            const { userId } = res.locals;
+            const { friendId } = req.body;
+            console.log('me delete', userId, friendId);
             if (userId === undefined || friendId === undefined) {
                 return res.sendStatus(400);
             }
@@ -94,7 +96,8 @@ export class MeController {
         });
 
         this.router.post('/name', async (req, res) => {
-            const {userId, newName } = req.body;
+            const { userId } = res.locals;
+            const { newName } = req.body;
             console.log(userId, newName);
             if (newName === undefined || userId === undefined) {
                 return res.sendStatus(400);

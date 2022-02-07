@@ -14,7 +14,7 @@ export class UsersController {
 
     private setRoutes() {
         this.router.get('/:userId', async (req, res) => {
-            const userId = req.params.userId;
+            const { userId } = req.params;
             if (userId === undefined) {
                 return res.sendStatus(400);
             }
@@ -34,11 +34,10 @@ export class UsersController {
             }
         });
 
-        this.router.post('/:userId/friend-request', async (req, res) => {
+        this.router.post('/:friendId/friend-request', async (req, res) => {
             // TODO cant if already friends
-            const friendToAdd = req.params.userId;
-            // TODO to get with auth
-            const userId = req.body.userId;
+            const { friendId: friendToAdd }= req.params;
+            const { userId } = res.locals;
             console.log(friendToAdd);
             if (userId === friendToAdd) {
                 return res.sendStatus(400);
@@ -60,10 +59,9 @@ export class UsersController {
             }
         });
 
-        this.router.get('/:userId/friend-request', async (req, res) => {
-            const friendToAdd = req.params.userId;
-            // TODO to get with auth
-            const userId = req.body.userId;
+        this.router.get('/:friendId/friend-request', async (req, res) => {
+            const { friendId: friendToAdd }= req.params;
+            const { userId } = res.locals;
             if (userId === friendToAdd) {
                 return res.sendStatus(400);
             }
@@ -88,7 +86,7 @@ export class UsersController {
         this.router.delete('/:userId/friend-request', async (req, res) => {
             const friendToAdd = req.params.userId;
             // TODO to get with auth
-            const userId = req.body.userId;
+            const { userId } = res.locals;
             if (userId === friendToAdd) {
                 return res.sendStatus(400);
             }
@@ -104,8 +102,5 @@ export class UsersController {
                 return res.sendStatus(400);
             }
         });
-        // TODO MAYBE DO A ME ROUTER TO GET INCOMING REQUEST AND DELETE FRIEND
-
-        
     }
 }
