@@ -1,7 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
-import { FriendRequest } from '@app/friend-request.interface';
+import { FriendRequest } from '@app/friend-requests/friend-request.interface';
 
 @Service()
 export class FriendRequestsDB  {

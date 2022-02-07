@@ -1,5 +1,5 @@
-import { FriendRequestsService } from '@app/friend-requests.service';
-import { UsersService } from '@app/users.service';
+import { FriendRequestsService } from '@app/friend-requests/friend-requests.service';
+import { UsersService } from '@app/user/users.service';
 import { isUuid } from '@app/utils';
 import express from 'express';
 

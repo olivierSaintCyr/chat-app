@@ -5,11 +5,11 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import path from 'path';
 import dotenv from 'dotenv';
-import { UsersService } from '@app/users.service';
-import { UsersController } from '@app/users-controller';
+import { UsersService } from '@app/user/users.service';
+import { UsersController } from '@app/user/users-controller';
 import Container from 'typedi';
-import { FriendRequestsService } from '@app/friend-requests.service';
-import { MeController } from '@app/me-controller-controller';
+import { FriendRequestsService } from '@app/friend-requests/friend-requests.service';
+import { MeController } from '@app/me/me-controller-controller';
 import { AuthService } from '@app/auth/auth.service';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});

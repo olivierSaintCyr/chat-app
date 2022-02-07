@@ -1,5 +1,5 @@
 import { FriendRequestsDB } from '@app/db-services/friend-requests-db.service';
-import { UsersService } from '@app/users.service';
+import { UsersService } from '@app/user/users.service';
 import { Service } from 'typedi';
 
 @Service()

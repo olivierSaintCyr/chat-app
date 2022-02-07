@@ -1,5 +1,5 @@
 import { UsersDBService } from '@app/db-services/users-db.service';
-import { BaseUser } from '@app/user.interface';
+import { BaseUser } from '@app/user/user.interface';
 import { Service } from 'typedi';
 
 @Service()

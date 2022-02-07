@@ -1,7 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
-import { BaseUser, PrivateUser, PublicUser } from '@app/user.interface';
+import { BaseUser, PrivateUser, PublicUser } from '@app/user/user.interface';
 
 @Service()
 export class UsersDBService  {
