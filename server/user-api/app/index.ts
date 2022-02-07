@@ -11,6 +11,8 @@ import Container from 'typedi';
 import { FriendRequestsService } from '@app/friend-requests/friend-requests.service';
 import { MeController } from '@app/me/me-controller-controller';
 import { AuthService } from '@app/auth/auth.service';
+import { UsersAccessService } from '@app/user/users-access.service';
+import { UserCreationController } from '@app/user/user-creation-controller';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -28,6 +30,12 @@ const authService = Container.get(AuthService);
 app.use(authService.middleware);
 
 const usersService = Container.get(UsersService);
+const userCreationController = new UserCreationController(usersService);
+app.use('/register', userCreationController.router);
+
+const userAccessService = Container.get(UsersAccessService);
+app.use(userAccessService.middleware);
+
 const friendRequestService = Container.get(FriendRequestsService);
 
 const usersController = new UsersController(usersService, friendRequestService);

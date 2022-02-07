@@ -22,12 +22,8 @@ export class AuthService {
             }
 
             try {
-                const userId = await this.getUserId(token);
-                console.log('userId', userId);
-                if (!userId) {
-                    return res.sendStatus(401);
-                }
-                res.locals.userId = userId;
+                const payload = await this.getUserId(token);
+                res.locals.userId = payload.username;
                 return next();
             } catch(e) {
                 return res.sendStatus(401);
@@ -35,15 +31,26 @@ export class AuthService {
         }
     }
 
-    async getUserId(token: string) {
-        // TODO check with aws cognito jwt validator
+    async getUserIdMock(token: string) {
+        // TODO remove in prod
         switch (token) {
             case 'abc':
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e2';
+                return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e2'};
             case 'def':
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e1';
+                return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e1'};
             case 'ghi':
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e0';
+                return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e0'};
+            default:
+                return undefined;
         }
+    }
+
+    async getUserId(token: string) {
+        // TODO remove in prod
+        const mockUserId = await this.getUserIdMock(token);
+        if (mockUserId) {
+            return mockUserId;
+        }
+        return await this.jwtValidator.validate(token);
     }
 }

@@ -1,5 +1,4 @@
 import { FriendRequestsService } from '@app/friend-requests/friend-requests.service';
-import { BaseUser } from '@app/user/user.interface';
 import { UsersService } from '@app/user/users.service';
 import { isUuid } from '@app/utils';
 import express from 'express';
@@ -17,6 +16,7 @@ export class MeController {
         this.router.get('/', async (req, res) => {
             // TODO get with auth
             const { userId } = res.locals;
+            console.log('get', userId);
             if (userId === undefined) {
                 return res.sendStatus(400);
             }
@@ -28,28 +28,6 @@ export class MeController {
             try {
                 const user = await this.usersService.getPrivateUser(userId);
                 return res.send(user);
-            } catch (e) {
-                return res.sendStatus(400);
-            }
-        });
-
-        this.router.post('/', async (req, res) => {
-            // TODO get userId from auth middle ware
-            const { userId } = res.locals;
-            const { name } = req.body;
-            console.log(name, userId);
-            if (name === undefined) {
-                return res.sendStatus(400);
-            }
-            // TODO verify imageUrl
-            const newUser: BaseUser = {
-                id: userId,
-                name,
-                imageUrl: 'default_profile_img'
-            }
-            try {
-                await this.usersService.createUser(newUser);
-                return res.sendStatus(200);
             } catch (e) {
                 return res.sendStatus(400);
             }
@@ -78,7 +56,6 @@ export class MeController {
             // TODO get with auth
             const { userId } = res.locals;
             const { friendId } = req.body;
-            console.log('me delete', userId, friendId);
             if (userId === undefined || friendId === undefined) {
                 return res.sendStatus(400);
             }
@@ -111,7 +88,6 @@ export class MeController {
                 await this.usersService.changeName(userId, newName);
                 return res.sendStatus(200);
             } catch (e) {
-                console.error(e);
                 return res.sendStatus(400); 
             }
         });

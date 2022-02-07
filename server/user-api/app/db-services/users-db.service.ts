@@ -70,6 +70,18 @@ export class UsersDBService  {
         await this.client.execute(query);
     }
 
+    async isUserExist(userId: string) {
+        const query = `
+            SELECT COUNT(*)
+            FROM user
+            WHERE id = ${userId};
+        `;
+        const result = await this.client.execute(query);
+        console.log(result.rows[0]);
+        const count: cassandra.types.Long = result.rows[0].count;
+        return count.toNumber() === 1;
+    }
+
     private rowToPublicUser(row: cassandra.types.Row): PublicUser {
         const friends = row.friends !== null ? 
             row.friends.map((uuid: cassandra.types.Uuid) => uuid.toString()) 

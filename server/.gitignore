@@ -2,3 +2,4 @@ data
 environments
 .env.prod
 production.env
+auth-test
