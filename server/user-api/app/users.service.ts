@@ -19,7 +19,9 @@ export class UsersService {
     }
 
     async removeFriend(userId: string, friendId: string) {
-        await this.usersDB.removeFriendFromUser(userId, friendId);
+        const removePromise1 = this.usersDB.removeFriendFromUser(userId, friendId);
+        const removePromise2 = this.usersDB.removeFriendFromUser(friendId, userId);
+        await Promise.all([removePromise1, removePromise2])
     }
 
     async changeName(userId: string, newName: string) {
