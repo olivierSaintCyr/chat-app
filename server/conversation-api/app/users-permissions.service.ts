@@ -18,8 +18,6 @@ export class UsersPermissionsService {
     private async isUserIn(userId: string, conversationId: string) {
         try {
             const users = await this.conversationsDB.getUsers(conversationId);
-            console.log(users);
-            console.log(users.find((user) => user === userId));
             const userInConvo = users.find((user) => user === userId) !== undefined;
             return userInConvo;
         } catch (e) {

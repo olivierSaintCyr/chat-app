@@ -57,7 +57,6 @@ export class ConversationsController {
         this.router.post('/', async (req, res) => {
             const { userId } = res.locals;
             const { conversationId, newTitle } = req.body;
-            console.log(conversationId, newTitle, userId);
             if (conversationId === undefined || newTitle === undefined) {
                 return res.sendStatus(400);
             }
@@ -67,7 +66,7 @@ export class ConversationsController {
                 return;
             }
 
-            const hasRight = this.usersPermissions.hasPermissionToEdit(userId, conversationId);
+            const hasRight = await this.usersPermissions.hasPermissionToEdit(userId, conversationId);
             if (!hasRight) {
                 return res.sendStatus(401);
             }
@@ -76,7 +75,6 @@ export class ConversationsController {
                 await this.conversationService.changeTitle(newTitle, conversationId);
                 return res.sendStatus(200);
             } catch (e) {
-                console.log('error', (e as Error).message);
                 return res.sendStatus(400);
             }
         });
