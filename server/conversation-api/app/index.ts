@@ -9,6 +9,8 @@ import { ConversationsController } from '@app/conversations-controller';
 import { UsersPermissionsService } from '@app/users-permissions.service';
 import path from 'path';
 import dotenv from 'dotenv';
+import { AuthService } from '@app/auth/auth.service';
+import { UsersAccessService } from '@app/users/users-access.service';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -25,6 +27,11 @@ const conversationsController = new ConversationsController(conversationsService
 app.get('/', (req, res) => {
     res.send('Hello World! welcome to user api');
 });
+const authService = Container.get(AuthService);
+app.use(authService.middleware);
+
+const userAccessService = Container.get(UsersAccessService);
+app.use(userAccessService.middleware);
 
 app.use('/conversations', conversationsController.router);
 

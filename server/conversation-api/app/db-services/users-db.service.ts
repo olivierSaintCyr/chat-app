@@ -10,12 +10,12 @@ export class UsersDBService {
     }
 
     async getConversations(userId: string): Promise<string[]> {
-        const query = `SELECT conversations FROM user WHERE id = ${userId}`;
+        const query = `SELECT conversations FROM user WHERE id = ${userId};`;
         const result = await this.client.execute(query);
         if (result.rows.length === 0) {
             throw Error(`No user found with id: ${userId}`);
         }
-
+        
         const uuids: cassandra.types.Uuid[] = result.rows[0].conversations;
         if (uuids === null) {
             return [];
@@ -32,5 +32,16 @@ export class UsersDBService {
     async removeConversation(userId: string, conversationId: string) {
         const query = `UPDATE user SET conversations = conversations - {${conversationId}} WHERE id = ${userId};`;
         await this.client.execute(query);
+    }
+
+    async isUserExist(userId: string) {
+        const query = `
+            SELECT COUNT(*)
+            FROM user
+            WHERE id = ${userId};
+        `;
+        const result = await this.client.execute(query);
+        const count: cassandra.types.Long = result.rows[0].count;
+        return count.toNumber() === 1;
     }
 }

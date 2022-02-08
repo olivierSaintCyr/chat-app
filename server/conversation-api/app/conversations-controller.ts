@@ -15,7 +15,7 @@ export class ConversationsController {
     private setRoutes() {
         // TODO REFACTOR use hasRight middle ware
         this.router.get('/', async (req, res) => {
-            const { userId } = req.body;
+            const { userId } = res.locals;
             try {
                 const conversations = await this.conversationService.getConversations(userId);
                 return res.send(conversations);
@@ -26,15 +26,7 @@ export class ConversationsController {
         });
         // TODO find better name and refactor for better perf
         this.router.get('/lastActive', async (req, res) => {
-            const { userId } = req.body;
-            if (userId === undefined) {
-                return res.sendStatus(400);
-            }
-
-            if (!isUuid(userId)) {
-                return res.sendStatus(400);
-            }
-
+            const { userId } = res.locals;
             try {
                 const activeConversations = await this.conversationService.getLastActiveConversations(userId);
                 return res.send(activeConversations);
@@ -48,8 +40,9 @@ export class ConversationsController {
             // TODO validate body
             // TODO get user id with auth and remove it from the users in params
             // a user can only add its friends
-            const { users, title } = req.body;
-            if (users === undefined || title === undefined) {
+            const { users } = res.locals;
+            const { title } = req.body;
+            if (title === undefined) {
                 return res.sendStatus(400);
             }
             // TODO cannot add inexisting user in conversation
@@ -62,18 +55,18 @@ export class ConversationsController {
         });
 
         this.router.post('/', async (req, res) => {
-            // TODO REMOVE userId from body after auth 
-            const { conversationId, newTitle, userId } = req.body;
+            const { userId } = res.locals;
+            const { conversationId, newTitle } = req.body;
             console.log(conversationId, newTitle, userId);
             if (conversationId === undefined || newTitle === undefined) {
                 return res.sendStatus(400);
-                return;
             }
 
             if (!isUuid(conversationId)) {
                 return res.sendStatus(400);
                 return;
             }
+
             const hasRight = this.usersPermissions.hasPermissionToEdit(userId, conversationId);
             if (!hasRight) {
                 return res.sendStatus(401);
@@ -89,13 +82,15 @@ export class ConversationsController {
         });
 
         this.router.delete('/', async (req, res) => {
-            // TODO enforce security verify right not every one can do this
             const { conversationId } = req.body;
             if (conversationId === undefined) {
                 return res.sendStatus(400);
-                return;
             }
-            // TODO remove this scope for common user
+            // TODO to implement make rights
+            if (conversationId !== undefined) {
+                return res.sendStatus(401);
+            }
+
             try {
                 await this.conversationService.delete(conversationId);
                 return res.sendStatus(200);
@@ -106,9 +101,9 @@ export class ConversationsController {
         
         this.router.post('/users', async (req, res) => {
             // TODO remove addedBy use the auth id instead
-            const { conversationId, userId, addedBy } = req.body;
+            const { userId } = res.locals;
+            const { conversationId, addedBy } = req.body;
             if (conversationId === undefined
-                || userId === undefined
                 || addedBy === undefined
             ) {
                 return res.sendStatus(400);
@@ -131,10 +126,10 @@ export class ConversationsController {
 
         this.router.delete('/users', async (req, res) => {
             // TODO remove removedBy use the auth id instead
-            const { conversationId, userId, removedBy } = req.body;
+            const { userId } = res.locals;
+            const { conversationId, removedBy } = req.body;
             // TODO check if conversationId is Uuid
             if (conversationId === undefined
-                || userId === undefined
                 || removedBy === undefined
             ) {
                 return res.sendStatus(400);
@@ -157,12 +152,13 @@ export class ConversationsController {
 
         this.router.post('/quit', async (req, res) => {
             // TODO replace userId by userId after auth
-            const { conversationId, userId } = req.body;
-            if (userId === undefined || conversationId === undefined) {
+            const { userId } = res.locals;
+            const { conversationId } = req.body;
+            if (conversationId === undefined) {
                 return res.sendStatus(400);
             }
 
-            if (!isUuid(userId) || !isUuid(conversationId)) {
+            if (!isUuid(conversationId)) {
                 return res.sendStatus(400);
             }
 
