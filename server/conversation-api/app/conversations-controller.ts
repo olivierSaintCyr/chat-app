@@ -1,5 +1,6 @@
 import { ConversationsService } from '@app/conversations.service';
 import { UsersPermissionsService } from '@app/users-permissions.service';
+import { UsersService } from '@app/users/users.service';
 import { isUuid } from '@app/utils';
 import { Router } from 'express';
 
@@ -7,7 +8,8 @@ export class ConversationsController {
     readonly router = Router();
     constructor(
         private conversationService: ConversationsService,
-        private usersPermissions: UsersPermissionsService
+        private usersPermissions: UsersPermissionsService,
+        private usersService: UsersService,
     ) {
         this.setRoutes();
     }
@@ -38,16 +40,26 @@ export class ConversationsController {
 
         this.router.put('/', async (req, res) => {
             // TODO validate body
-            // TODO get user id with auth and remove it from the users in params
-            // a user can only add its friends
-            const { users } = res.locals;
-            const { title } = req.body;
+            // TODO a user can only add its friends
+            const { userId } = res.locals;
+            const { users, title } = req.body;
             if (title === undefined) {
                 return res.sendStatus(400);
             }
-            // TODO cannot add inexisting user in conversation
+
+            const hasRights = await this.usersPermissions.hasPermissionToAddUsers(userId, users);
+            if (!hasRights) {
+                return res.sendStatus(401);
+            }
+            // TODO maybe remove if we suppose that every friends are existing user
+            const allUsersExists = await this.usersService.allUsersExists(users);
+            if (!allUsersExists) {
+                return res.sendStatus(400);
+            }
+
             try {
-                await this.conversationService.create(users, title);
+                const usersToAdd = [userId, ...users];
+                await this.conversationService.create(usersToAdd, title);
                 return res.sendStatus(200);
             } catch (e) {
                 return res.sendStatus(400);

@@ -11,6 +11,7 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { AuthService } from '@app/auth/auth.service';
 import { UsersAccessService } from '@app/users/users-access.service';
+import { UsersService } from '@app/users/users.service';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -22,7 +23,12 @@ app.use(cors());
 
 const conversationsService = Container.get(ConversationsService);
 const usersPermissionsService = Container.get(UsersPermissionsService);
-const conversationsController = new ConversationsController(conversationsService, usersPermissionsService);
+const usersService = Container.get(UsersService);
+const conversationsController = new ConversationsController(
+    conversationsService,
+    usersPermissionsService,
+    usersService
+);
 
 app.get('/', (req, res) => {
     res.send('Hello World! welcome to user api');
