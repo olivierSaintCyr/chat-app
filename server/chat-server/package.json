@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc & cp app/environments/.env.prod dist/.env & node .",
-    "dev": "tsc -w & cp app/environments/.env.dev dist/.env & nodemon .",
+    "start": "tsc & cp app/environments/production.env dist/.env & node .",
+    "dev": "tsc -w & cp app/environments/development.env dist/.env & nodemon .",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
@@ -18,6 +18,7 @@
   "dependencies": {
     "@types/jsonwebtoken": "^8.5.7",
     "@types/jwk-to-pem": "^2.0.1",
+    "axios": "^0.25.0",
     "cassandra-driver": "^4.6.3",
     "cookie-parser": "^1.4.6",
     "cors": "^2.8.5",

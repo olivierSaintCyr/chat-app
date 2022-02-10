@@ -5,6 +5,7 @@ import { createNewMessage } from './create-message';
 import { LastMessage, MessagesService } from '@app/messages/messages.service';
 import { ConversationsService } from '@app/conversations/conversations.service';
 import { isUuid } from '@app/utils';
+import { AuthService } from '@app/auth/auth.service';
 
 export class SocketHandler {
     io: Server;
@@ -15,7 +16,8 @@ export class SocketHandler {
     constructor(
         httpServer: HttpServer,
         private messagesService: MessagesService,
-        private conversationService: ConversationsService
+        private conversationService: ConversationsService,
+        private authService: AuthService,
     ) {
         this.io = new Server(httpServer);
         this.messagesService.subscribe((lastConversationMessage) => {
@@ -24,15 +26,16 @@ export class SocketHandler {
     }
 
     handleSocket() {
-        this.io.use((socket, next) => {
-            // TODO implement auth
+        this.io.use(
+            this.authService.socketMiddleware
+        ).use((socket, next) => {
+            console.log('after auth middleware userId:', socket.data.userId);
+            // TODO check if user created
             next();
-        }).on('connection', (socket) => {
-            const token = socket.handshake.headers.auth as string;
-            this.connectUser(socket, token);
-            
-            const userId = this.mockIdentity(token);
-            console.log(`user : ${this.mockIdentity(token)}`);
+        })
+        .on('connection', (socket) => {
+            const { userId } = socket.data;
+            this.connectUser(socket);
 
             socket.on('join', async (conversationId: string) => {
                 if (!isUuid(conversationId)) {
@@ -74,7 +77,7 @@ export class SocketHandler {
             // TODO implement la
 
             socket.on('leave', () => {
-                const [roomId] = [...socket.rooms.values()];
+                const [ roomId ] = [...socket.rooms.values()];
                 socket.leave(roomId);
             });
 
@@ -97,20 +100,17 @@ export class SocketHandler {
         }
     }
 
-    private connectUser(socket: Socket, token: string) {
-        // get user id with token
-        // to remove start
-        const userChatId = this.mockIdentity(token);
-        // to remove end
+    private connectUser(socket: Socket) {
+        const { userId } = socket.data;
         const socketId = socket.id;
-        const userIds = this.userToSocketIds.get(userChatId);
+        const userIds = this.userToSocketIds.get(userId);
         if (!userIds) {
-            this.userToSocketIds.set(userChatId, new Set<string>([socketId]));
+            this.userToSocketIds.set(userId, new Set<string>([socketId]));
         } else {
             userIds.add(socketId);
         }
         
-        this.socketIdToUser.set(socketId, userChatId);
+        this.socketIdToUser.set(socketId, userId);
     }
 
     private disconnectUser(socket: Socket) {
@@ -144,18 +144,5 @@ export class SocketHandler {
 
     private sendError(errorContent: string, socket: Socket) {
         socket.emit('error', errorContent);
-    }
-
-    private mockIdentity(token: string): string {
-        switch(token) {
-            case '1':
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e2';
-            
-            case '2':
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e1';
-            
-            default:
-                return '5b6962dd-3f90-4c93-8f61-eabfa4a803e0';
-        }
     }
 }

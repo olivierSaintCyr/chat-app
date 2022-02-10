@@ -8,6 +8,7 @@ import { SocketHandler } from './socket-handler';
 import Container from 'typedi';
 import path from 'path';
 import { ConversationsService } from '@app/conversations/conversations.service';
+import { AuthService } from '@app/auth/auth.service';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
 
@@ -15,7 +16,8 @@ const app = express();
 const server = createServer(app); // TODO: change to https
 const messagesService = Container.get(MessagesService);
 const conversationsService = Container.get(ConversationsService)
-const io = new SocketHandler(server, messagesService, conversationsService);
+const authService = Container.get(AuthService);
+const io = new SocketHandler(server, messagesService, conversationsService, authService);
 io.handleSocket();
 
 app.get('/', (req, res) => {

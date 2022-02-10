@@ -9,7 +9,7 @@ export class ConversationsService {
         const users = await this.conversationsDBService.getUsersInConversation(conversationId);
         return users;
     }
-
+    // TODO optimise
     async getPermission(userId: string, conversationId: string): Promise<boolean> {
         const users = await this.conversationsDBService.getUsersInConversation(conversationId);
         for (const user of users) {
