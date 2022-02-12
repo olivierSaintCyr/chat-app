@@ -15,7 +15,6 @@ export class UsersAccessService {
             const userCreated = await this.isUserCreated(userId);
             // TODO put more explicit error message 400 not explicit enough
             if (!userCreated) {
-                console.log(userCreated);
                 return res.sendStatus(400);
             }
             return next();
