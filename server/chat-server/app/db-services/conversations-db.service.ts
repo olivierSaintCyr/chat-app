@@ -12,8 +12,9 @@ export class ConversationsDBService {
     async getUsersInConversation(conversationId: string): Promise<string[]> {
         const query = `SELECT users
             FROM conversation
-            WHERE id = ${conversationId};`;
-        const result = await this.client.execute(query);
+            WHERE id = ?;`;
+        const params = [ conversationId ];
+        const result = await this.client.execute(query, params);
         if (result.rows.length === 0) {
             return [];
         }
@@ -25,9 +26,10 @@ export class ConversationsDBService {
     async updateLastMessage(message: Message, messageId: string) {
         const query = `
             UPDATE conversation 
-            SET last_message = ${messageId}, last_message_date = ${message.date.getTime()}
-            WHERE id = ${message.conversation};
+            SET last_message = ?, last_message_date = ?
+            WHERE id = ?;
         `;
-        await this.client.execute(query);
+        const params = [ messageId, message.date, message.conversation ];
+        await this.client.execute(query, params, { prepare: true });
     }
 }
