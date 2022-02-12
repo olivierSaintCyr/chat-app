@@ -22,7 +22,8 @@ export class ConversationsDBService {
     }
 
     async getUsersInConversation(conversationId: string): Promise<string[]> {
-        const query = `SELECT users
+        const query = `
+            SELECT users
             FROM conversation
             WHERE id = ?;
         `;
