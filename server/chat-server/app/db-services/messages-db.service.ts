@@ -74,15 +74,4 @@ export class MessagesDBService {
         });
         return messages;
     }
-
-    private createNewMessageQuery(message: Message) {
-        const query = `INSERT INTO message (id, conversation, author, content, sent_date) VALUES (
-            uuid(),
-            ${message.conversation},
-            ${message.author},
-            '${message.content}',
-            ${message.date.getTime()}
-        )`;
-        return query;
-    }
 }
