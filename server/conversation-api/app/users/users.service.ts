@@ -6,15 +6,15 @@ export class UsersService {
     constructor(private usersDB: UsersDBService) {}
 
     async allUsersExists(userIds: string[]) {
-        const userExistance: boolean[] = [];
+        const userExistence: boolean[] = [];
         await Promise.all(
             userIds.map((userId) => 
                 this.usersDB.isUserExist(userId).then(
-                    (exists) => userExistance.push(exists)
+                    (exists) => userExistence.push(exists)
                 )
             )
         );
-        const allUsersExists = userExistance.findIndex((value) => !value) === -1;
+        const allUsersExists = userExistence.findIndex((value) => !value) === -1;
         return allUsersExists;
     }
 }
