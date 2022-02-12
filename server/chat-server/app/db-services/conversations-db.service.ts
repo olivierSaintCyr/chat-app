@@ -9,10 +9,23 @@ export class ConversationsDBService {
         return this.cassandraDBClient.client;
     }
 
+    async isUserInConversation(userId: string, conversationId: string) {
+        const query = `
+            SELECT * FROM conversation
+            WHERE id = ?
+            AND users CONTAINS ?
+            ALLOW FILTERING;
+        `;
+        const params = [ conversationId, userId ];
+        const result = await this.client.execute(query, params);
+        return result.rowLength > 0;
+    }
+
     async getUsersInConversation(conversationId: string): Promise<string[]> {
         const query = `SELECT users
             FROM conversation
-            WHERE id = ?;`;
+            WHERE id = ?;
+        `;
         const params = [ conversationId ];
         const result = await this.client.execute(query, params);
         if (result.rows.length === 0) {

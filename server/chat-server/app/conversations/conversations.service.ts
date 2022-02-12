@@ -5,19 +5,16 @@ import { Service } from 'typedi';
 @Service()
 export class ConversationsService {
     constructor(private conversationsDBService: ConversationsDBService) {}
+
     async getUsers(conversationId: string): Promise<string[]> {
         const users = await this.conversationsDBService.getUsersInConversation(conversationId);
         return users;
     }
+
     // TODO optimise
     async getPermission(userId: string, conversationId: string): Promise<boolean> {
-        const users = await this.conversationsDBService.getUsersInConversation(conversationId);
-        for (const user of users) {
-            if (user === userId) {
-                return true;
-            }
-        }
-        return false;
+        const isUserInConversation = await this.conversationsDBService.isUserInConversation(userId, conversationId);
+        return isUserInConversation;
     }
 
     async updateLastMessage(message: Message, messageId: string) {
