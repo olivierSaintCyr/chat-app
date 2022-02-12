@@ -6,6 +6,7 @@ import { LastMessage, MessagesService } from '@app/messages/messages.service';
 import { ConversationsService } from '@app/conversations/conversations.service';
 import { isUuid } from '@app/utils';
 import { AuthService } from '@app/auth/auth.service';
+import { UserAccessService } from '@app/user-access.service';
 
 export class SocketHandler {
     io: Server;
@@ -18,6 +19,7 @@ export class SocketHandler {
         private messagesService: MessagesService,
         private conversationService: ConversationsService,
         private authService: AuthService,
+        private userAccess: UserAccessService
     ) {
         this.io = new Server(httpServer);
         this.messagesService.subscribe((lastConversationMessage) => {
@@ -28,12 +30,9 @@ export class SocketHandler {
     handleSocket() {
         this.io.use(
             this.authService.socketMiddleware
-        ).use((socket, next) => {
-            console.log('after auth middleware userId:', socket.data.userId);
-            // TODO check if user created
-            next();
-        })
-        .on('connection', (socket) => {
+        ).use(
+            this.userAccess.socketMiddleware
+        ).on('connection', (socket) => {
             const { userId } = socket.data;
             this.connectUser(socket);
 
