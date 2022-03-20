@@ -8,13 +8,10 @@ import path from 'path';
 import dotenv from 'dotenv';
 import { AuthService } from '@app/auth/auth.service';
 import { UsersAccessService } from '@app/users/users-access.service';
-import { spawn } from 'child_process';
 import { ProfilePictureService } from '@app/image-services/profile-picture.service';
 import { ProfilePictureController } from '@app/image-services/profile-picture-controller';
 
 dotenv.config({ path: path.join(__dirname, `./.env`)});
-
-spawn('mkdir', ['-p', 'data/images']);
 
 const app = express();
 app.use(express.json({ limit: '300mb' }));
