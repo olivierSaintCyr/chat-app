@@ -1,0 +1,6 @@
+{
+    "watch": ["app"],
+    "ignore": ["app/**/*.spec.ts"],
+    "ext": "ts",
+    "exec": "npm run build &&  cp app/environments/development.env dist/.env && node --inspect dist/index.js"
+}
