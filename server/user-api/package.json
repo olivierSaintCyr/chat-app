@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "tsc & cp app/environments/production.env dist/.env & node .",
-    "dev": "tsc -w & cp app/environments/development.env dist/.env & nodemon .",
+    "dev": "nodemon",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
