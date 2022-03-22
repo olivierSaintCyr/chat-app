@@ -19,11 +19,10 @@ app.use(express.urlencoded({ extended: true, limit: '300mb' }));
 app.use(cookieParser());
 app.use(cors());
 
-
-
 app.get('/', (req, res) => {
     res.send('Hello World! Welcome to image api');
 });
+
 const authService = Container.get(AuthService);
 app.use(authService.middleware);
 
