@@ -1,6 +1,7 @@
 import { S3ProfilePictureService } from '@app/s3-services/s3-profile-picture.service';
 import { Service } from 'typedi';
 import { v4 as uuidv4 } from 'uuid';
+import fs from 'fs';
 
 @Service()
 export class ProfilePictureService {
@@ -12,6 +13,7 @@ export class ProfilePictureService {
             pictureId,
             filePath,
         );
+        this.removeTempFile(filePath);
         return picturePath;
     }
 
@@ -20,5 +22,9 @@ export class ProfilePictureService {
             pictureId,
         );
         return fileStream;
-    } 
+    }
+
+    private removeTempFile(filepath: string) {
+        fs.unlinkSync(filepath);
+    }
 }
