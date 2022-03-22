@@ -3,6 +3,7 @@ import { PROFILE_PICTURE_UPLOAD_DIR_PATH } from '@app/paths';
 import { SUPPORTED_FILES } from '@app/supported-files';
 import { Router } from 'express';
 import multer from 'multer';
+import internal from 'stream';
 
 
 export class ProfilePictureController {
@@ -30,7 +31,8 @@ export class ProfilePictureController {
             if (imageId === undefined) {
                 return res.sendStatus(400);
             }
-            const readStream = await this.profilePictureService.getPicture(imageId);
+            const readStream: internal.Readable = await this.profilePictureService.getPicture(imageId);
+            readStream.on('error', () => res.sendStatus(404));
             readStream.pipe(res);
         });
 
