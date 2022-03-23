@@ -53,7 +53,7 @@ services:
       target: dev
     container_name: image-server
     ports:
-      - 8083:8000
+      - 8083:8080
     depends_on:
       cassandra-db:
         condition: service_healthy
