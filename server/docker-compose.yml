@@ -21,6 +21,8 @@ services:
     container_name: chat-server
     ports:
       - 8080:8080
+    volumes:
+      - ./chat-server/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
@@ -32,6 +34,8 @@ services:
     container_name: user-api
     ports:
       - 8081:8080
+    volumes:
+      - ./user-api/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
@@ -43,6 +47,8 @@ services:
     container_name: conversation-api
     ports:
       - 8082:8080
+    volumes:
+      - ./conversation-api/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
@@ -54,6 +60,8 @@ services:
     container_name: image-server
     ports:
       - 8083:8080
+    volumes:
+      - ./image-server/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy

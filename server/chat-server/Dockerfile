@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 FROM node:12.18.1-alpine as base
 
-WORKDIR /app
+WORKDIR /node-app
 COPY ["package.json", "package-lock.json*", "tsconfig.json", "nodemon.json", "./"]
 EXPOSE 8080
 
