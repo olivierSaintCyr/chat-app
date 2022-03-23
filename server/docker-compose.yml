@@ -47,5 +47,16 @@ services:
       cassandra-db:
         condition: service_healthy
 
+  image-server:
+    build:
+      context: ./image-server
+      target: dev
+    container_name: image-server
+    ports:
+      - 8083:8000
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
+
     # maybe put volume but ig not necessary
   

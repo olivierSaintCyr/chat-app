@@ -5,8 +5,8 @@
   "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
-    "start": "tsc & cp app/environments/production.env dist/.env & node .",
-    "dev": "nodemon",
+    "start": "tsc & node ./dist/index.js -r dotenv/config dotenv_config_path=./app/environments/production.env",
+    "dev": "nodemon -r dotenv/config dotenv_config_path=./app/environments/development.env",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
