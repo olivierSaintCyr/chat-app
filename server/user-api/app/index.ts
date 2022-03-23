@@ -1,6 +1,6 @@
 import 'module-alias/register';
 import 'reflect-metadata';
-import 'dotenv/config'
+import 'dotenv/config';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';

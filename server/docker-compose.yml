@@ -9,16 +9,21 @@ services:
     ports:
       - 9042:9042
     healthcheck:
-      test: ["CMD", "cqlsh", "-e", "describe keyspaces" ]
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces"]
       interval: 1s
       timeout: 5s
       retries: 60
   
-  # chat-server:
-  #   build: ./chat-server
-  #   container_name: chat-server
-  #   ports:
-  #     - 8080:8080
+  chat-server:
+    build: 
+      context: ./chat-server
+      target: dev
+    container_name: chat-server
+    ports:
+      - 8080:8080
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
   
   user-api:
     build: 
@@ -26,7 +31,7 @@ services:
       target: dev
     container_name: user-api
     ports:
-      - 8081:8080
+      - 8083:8080
     depends_on:
       cassandra-db:
         condition: service_healthy
