@@ -1,7 +1,7 @@
 version: '3'
 
 services:
-  database:
+  cassandra-db:
     image: cassandra
     container_name: cassandra-chat-app
     volumes:
@@ -15,10 +15,12 @@ services:
   #   ports:
   #     - 8080:8080
   
-  # user-api:
-  #   build: ./user-api
-  #   container_name: user-api
-  #   ports:
-  #     - 8081:8080
+  user-api:
+    build: 
+      context: ./user-api
+      target: dev
+    container_name: user-api
+    ports:
+      - 8081:8080
     # maybe put volume but ig not necessary
   

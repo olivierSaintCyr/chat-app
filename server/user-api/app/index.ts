@@ -41,5 +41,5 @@ app.use('/users', usersController.router);
 const meController = new MeController(usersService, friendRequestService);
 app.use('/me', meController.router);
 
-const PORT = 8089;
+const PORT = 8080;
 app.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`));
