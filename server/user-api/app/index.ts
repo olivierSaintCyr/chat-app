@@ -1,10 +1,9 @@
 import 'module-alias/register';
 import 'reflect-metadata';
+import 'dotenv/config'
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import path from 'path';
-import dotenv from 'dotenv';
 import { UsersService } from '@app/user/users.service';
 import { UsersController } from '@app/user/users-controller';
 import Container from 'typedi';
@@ -13,8 +12,6 @@ import { MeController } from '@app/me/me-controller-controller';
 import { AuthService } from '@app/auth/auth.service';
 import { UsersAccessService } from '@app/user/users-access.service';
 import { UserCreationController } from '@app/user/user-creation-controller';
-
-dotenv.config({ path: path.join(__dirname, `./.env`)});
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -44,5 +41,5 @@ app.use('/users', usersController.router);
 const meController = new MeController(usersService, friendRequestService);
 app.use('/me', meController.router);
 
-const PORT = 8083;
+const PORT = 8089;
 app.listen(PORT, () => console.log(`Chat server listenning on port: ${PORT}`));
