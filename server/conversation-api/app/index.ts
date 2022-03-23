@@ -38,5 +38,5 @@ app.use(userAccessService.middleware);
 
 app.use('/conversations', conversationsController.router);
 
-const PORT = 8082;
+const PORT = 8080;
 app.listen(PORT, () => console.log(`Conversation api is listenning on port: ${PORT}`));
