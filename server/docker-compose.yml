@@ -8,6 +8,11 @@ services:
       - ./data:/var/lib/cassandra
     ports:
       - 9042:9042
+    healthcheck:
+      test: ["CMD", "cqlsh", "-e", "describe keyspaces" ]
+      interval: 1s
+      timeout: 5s
+      retries: 60
   
   # chat-server:
   #   build: ./chat-server
@@ -22,5 +27,8 @@ services:
     container_name: user-api
     ports:
       - 8081:8080
+    depends_on:
+      cassandra-db:
+        condition: service_healthy
     # maybe put volume but ig not necessary
   
