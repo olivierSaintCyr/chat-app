@@ -1,10 +1,19 @@
 import { FriendRequestsService } from '@app/friend-requests/friend-requests.service';
+import { PROFILE_PICTURE_UPLOAD_DIR } from '@app/paths';
 import { UsersService } from '@app/user/users.service';
 import { isUuid } from '@app/utils';
 import express from 'express';
+import multer from 'multer';
 
 export class MeController {
     router = express.Router();
+
+    private upload: multer.Multer = multer(
+        {
+            dest: PROFILE_PICTURE_UPLOAD_DIR,
+        }
+    );
+
     constructor(
         private usersService: UsersService,
         private friendReqService: FriendRequestsService
@@ -91,5 +100,19 @@ export class MeController {
                 return res.sendStatus(400); 
             }
         });
+
+        this.router.post('/profile-picture', this.upload.single('image'), async (req, res) => {
+            const { file } = req;
+            if (file === undefined) {
+                return res.sendStatus(400);
+            }
+            const { userId } = res.locals;
+            try {
+                await this.usersService.updateProfilePicture(userId, file);
+                return res.sendStatus(200);
+            } catch (e) {
+                return res.sendStatus(400);
+            }
+        })
     }
 }

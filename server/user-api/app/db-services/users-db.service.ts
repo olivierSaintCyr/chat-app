@@ -57,6 +57,15 @@ export class UsersDBService  {
         await this.client.execute(query);
     }
 
+    async updateProfilePicture(userId: string, path: string) {
+        const query = `
+            UPDATE user
+            SET image_url = '${path}'
+            WHERE id = ${userId};
+        `;
+        await this.client.execute(query);
+    }
+
     async createUser(baseUser: BaseUser) {
         const query = `
             INSERT INTO user (id, name, image_url, friends, conversations) VALUES (

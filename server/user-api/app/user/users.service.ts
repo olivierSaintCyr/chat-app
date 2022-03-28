@@ -1,10 +1,15 @@
 import { UsersDBService } from '@app/db-services/users-db.service';
+import { ProfilePictureService } from '@app/me/profile-picture.service';
 import { BaseUser } from '@app/user/user.interface';
 import { Service } from 'typedi';
+import fs from 'fs';
 
 @Service()
 export class UsersService {
-    constructor(private usersDB: UsersDBService) {}
+    constructor(
+        private usersDB: UsersDBService,
+        private profilePicService: ProfilePictureService,
+    ) {}
 
     async getPrivateUser(userId: string) {
         return await this.usersDB.getPrivateUser(userId);
@@ -34,5 +39,21 @@ export class UsersService {
 
     async areTheyFriends(userId: string, friendId: string) {
         return await this.usersDB.isFriendOf(userId, friendId);
+    }
+
+    async updateProfilePicture(userId: string, file: Express.Multer.File) {
+        const filePath = file.path;
+        const profilePicturePath = await this.profilePicService.updatePictureFile(file);
+        if (!profilePicturePath) {
+            this.removeTempFile(filePath);
+            return null;
+        }
+        await this.usersDB.updateProfilePicture(userId, profilePicturePath);
+        this.removeTempFile(filePath);
+        return profilePicturePath;
+    }
+
+    private removeTempFile(filePath: string) {
+       fs.unlinkSync(filePath);
     }
 }

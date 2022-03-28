@@ -5,8 +5,6 @@ import express from 'express';
 import cors from 'cors';
 import cookieParser from 'cookie-parser';
 import { Container } from 'typedi';
-import { AuthService } from '@app/auth/auth.service';
-import { UsersAccessService } from '@app/users/users-access.service';
 import { ProfilePictureService } from '@app/image-services/profile-picture.service';
 import { ProfilePictureController } from '@app/image-services/profile-picture-controller';
 
@@ -20,11 +18,11 @@ app.get('/', (req, res) => {
     res.send('Hello World! Welcome to image api');
 });
 
-const authService = Container.get(AuthService);
-app.use(authService.middleware);
+// const authService = Container.get(AuthService);
+// app.use(authService.middleware);
 
-const userAccessService = Container.get(UsersAccessService);
-app.use(userAccessService.middleware);
+// const userAccessService = Container.get(UsersAccessService);
+// app.use(userAccessService.middleware);
 
 const profilePictureService = Container.get(ProfilePictureService);
 const profilePictureController = new ProfilePictureController(profilePictureService);
