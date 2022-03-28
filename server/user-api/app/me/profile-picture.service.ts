@@ -39,7 +39,6 @@ export class ProfilePictureService {
 
     private createFormDataForFile(file: Express.Multer.File) {
         const form = new FormData();
-        
         const contentType = file.mimetype;
         const filePath = file.path;
         const fileStream = fs.createReadStream(filePath);
