@@ -15,6 +15,10 @@ export class UsersService {
         return await this.usersDB.getPrivateUser(userId);
     }
 
+    async getProfilePicture(userId: string) {
+        return await this.usersDB.getProfilePicture(userId);
+    }
+
     async getPublicUser(userId: string) {
         return await this.usersDB.getPublicUser(userId);
     }

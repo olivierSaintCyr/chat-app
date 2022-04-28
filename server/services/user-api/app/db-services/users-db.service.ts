@@ -30,6 +30,16 @@ export class UsersDBService  {
         return this.rowToPrivateUser(row);
     }
 
+    async getProfilePicture(userId: string): Promise<string> {
+        const query = `SELECT image_url FROM user WHERE id = ${userId};`
+        const result = await this.client.execute(query);
+        if (result.rows.length === 0) {
+            throw Error(`No user has the id: ${userId}`);
+        }
+        const { image_url: imageUrl } = result.rows[0];
+        return imageUrl;
+    }
+
     async addFriendToUser(userId: string, newFriendId: string) {
         const query = `
             UPDATE user 

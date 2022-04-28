@@ -2,9 +2,13 @@ import { FriendRequestsService } from '@app/friend-requests/friend-requests.serv
 import { UsersService } from '@app/user/users.service';
 import { isUuid } from '@app/utils';
 import express from 'express';
+import proxy from 'express-http-proxy';
 
 export class UsersController {
     router = express.Router();
+
+    private IMAGE_SERVER_URL = process.env.IMAGE_SERVER_HOST as string;
+
     constructor(
         private usersService: UsersService,
         private friendReqService: FriendRequestsService
@@ -36,7 +40,7 @@ export class UsersController {
 
         this.router.post('/:friendId/friend-request', async (req, res) => {
             // TODO cant if already friends
-            const { friendId: friendToAdd }= req.params;
+            const { friendId: friendToAdd } = req.params;
             const { userId } = res.locals;
             console.log(friendToAdd);
             if (userId === friendToAdd) {
@@ -81,6 +85,16 @@ export class UsersController {
                 return res.sendStatus(400);
             }
         });
+
+        this.router.get('/:userId/profile-picture', proxy(this.IMAGE_SERVER_URL, {
+                    proxyReqPathResolver: async (req) => {
+                        const { userId } = req.params;
+                        const profilePicturePath = await this.usersService.getProfilePicture(userId);
+                        return `/${profilePicturePath}`;
+                    }
+                }
+            )
+        );
 
         // cancel 
         this.router.delete('/:userId/friend-request', async (req, res) => {
