@@ -16,6 +16,8 @@ export class AuthService {
                 return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e1'};
             case 'ghi':
                 return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e0'};
+            case 'jkl':
+                return {username: '5b6962dd-3f90-4c93-8f61-eabfa4a803e3'};
             default:
                 return undefined;
         }

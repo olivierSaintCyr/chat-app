@@ -1,7 +1,7 @@
 import { CassandraDBClient } from '@app/db-services/cassandra-db-client.service';
 import { Service } from 'typedi';
 import * as cassandra from 'cassandra-driver';
-import { BaseUser, PrivateUser, PublicUser } from '@app/user/user.interface';
+import { NewUser, PrivateUser, PublicUser } from '@app/user/user.interface';
 
 @Service()
 export class UsersDBService  {
@@ -76,12 +76,12 @@ export class UsersDBService  {
         await this.client.execute(query);
     }
 
-    async createUser(baseUser: BaseUser) {
+    async createUser(newUser: NewUser) {
         const query = `
             INSERT INTO user (id, name, image_url, friends, conversations) VALUES (
-                ${baseUser.id},
-                '${baseUser.name}',
-                '${baseUser.imageUrl}',
+                ${newUser.id},
+                '${newUser.name}',
+                '${newUser.imageUrl}',
                 {},
                 {}
             ) IF NOT EXISTS;
@@ -120,7 +120,6 @@ export class UsersDBService  {
         return {
             id: row.id.toString(),
             friends,
-            imageUrl: row.image_url,
             name: row.name
         };
     }
@@ -136,8 +135,7 @@ export class UsersDBService  {
             id: row.id.toString(),
             conversations,
             friends,
-            imageUrl: row.image_url,
-            name: row.name
+            name: row.name,
         };
     }
 }

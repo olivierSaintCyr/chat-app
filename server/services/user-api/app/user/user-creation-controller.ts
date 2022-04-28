@@ -1,12 +1,13 @@
 
-import { BaseUser } from '@app/user/user.interface';
+import { NewUserFactory } from '@app/user/new-user-factory.service';
 import { UsersService } from '@app/user/users.service';
 import express from 'express';
 
 export class UserCreationController {
     router = express.Router();
     constructor(
-        private usersService: UsersService
+        private usersService: UsersService,
+        private newUserFactory: NewUserFactory,
     ) {
         this.setRoutes();
     }
@@ -20,12 +21,8 @@ export class UserCreationController {
             if (name === undefined) {
                 return res.sendStatus(400);
             }
-            // TODO verify imageUrl
-            const newUser: BaseUser = {
-                id: userId,
-                name,
-                imageUrl: 'default_profile_img'
-            };
+
+            const newUser = this.newUserFactory.createNewUser(userId, name);
             try {
                 await this.usersService.createUser(newUser);
                 return res.sendStatus(200);

@@ -1,6 +1,6 @@
 import { UsersDBService } from '@app/db-services/users-db.service';
 import { ProfilePictureService } from '@app/me/profile-picture.service';
-import { BaseUser } from '@app/user/user.interface';
+import { NewUser } from '@app/user/user.interface';
 import { Service } from 'typedi';
 import fs from 'fs';
 
@@ -37,8 +37,8 @@ export class UsersService {
         await this.usersDB.changeName(userId, newName);
     }
 
-    async createUser(baseUser: BaseUser) {
-        await this.usersDB.createUser(baseUser);
+    async createUser(newUser: NewUser) {
+        await this.usersDB.createUser(newUser);
     }
 
     async areTheyFriends(userId: string, friendId: string) {

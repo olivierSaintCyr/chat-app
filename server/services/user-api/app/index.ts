@@ -12,6 +12,7 @@ import { MeController } from '@app/me/me-controller-controller';
 import { AuthService } from '@app/auth/auth.service';
 import { UsersAccessService } from '@app/user/users-access.service';
 import { UserCreationController } from '@app/user/user-creation-controller';
+import { NewUserFactory } from '@app/user/new-user-factory.service';
 
 const app = express();
 app.use(express.json({ limit: '50mb' }));
@@ -27,7 +28,8 @@ const authService = Container.get(AuthService);
 app.use(authService.middleware);
 
 const usersService = Container.get(UsersService);
-const userCreationController = new UserCreationController(usersService);
+const newUserFactory = Container.get(NewUserFactory)
+const userCreationController = new UserCreationController(usersService, newUserFactory);
 app.use('/register', userCreationController.router);
 
 const userAccessService = Container.get(UsersAccessService);

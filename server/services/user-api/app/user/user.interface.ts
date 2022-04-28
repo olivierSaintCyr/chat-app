@@ -9,5 +9,10 @@ export interface PublicUser extends BaseUser {
 export interface BaseUser {
     id: string
     name: string;
-    imageUrl: string;
+}
+
+export interface NewUser {
+    id: string,
+    name: string,
+    imageUrl: string,
 }
