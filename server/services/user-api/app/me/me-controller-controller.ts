@@ -4,9 +4,12 @@ import { UsersService } from '@app/user/users.service';
 import { isUuid } from '@app/utils';
 import express from 'express';
 import multer from 'multer';
+import proxy from 'express-http-proxy';
 
 export class MeController {
     router = express.Router();
+
+    private readonly IMAGE_SERVER_URL = process.env.IMAGE_SERVER_HOST as string;
 
     private upload: multer.Multer = multer(
         {
@@ -59,6 +62,20 @@ export class MeController {
             } catch (e) {
                 return res.sendStatus(400);
             }
+        });
+
+        this.router.get('/profile-picture', (req, res, next) => {
+            const { userId } = res.locals;
+            // used to gen the proxyReqPathResolver function with userId
+            const proxyMiddleware = proxy(
+                this.IMAGE_SERVER_URL, {
+                proxyReqPathResolver: async () => {
+                        const profilePicturePath = await this.usersService.getProfilePicture(userId);
+                        return `/${profilePicturePath}`;
+                    }
+                }
+            );
+            proxyMiddleware(req, res, next);
         });
 
         this.router.delete('/friends', async (req, res) => {
