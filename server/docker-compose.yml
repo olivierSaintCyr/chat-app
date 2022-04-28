@@ -59,7 +59,7 @@ services:
       target: dev
     container_name: image-server
     ports:
-      - 8083:8080
+      - 8083:8080 # TODO put in private
     volumes:
       - ./services/image-server/app:/node-app/app
     depends_on:
