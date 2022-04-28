@@ -16,52 +16,52 @@ services:
   
   chat-server:
     build: 
-      context: ./chat-server
+      context: ./services/chat-server
       target: dev
     container_name: chat-server
     ports:
       - 8080:8080
     volumes:
-      - ./chat-server/app:/node-app/app
+      - ./services/chat-server/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
   
   user-api:
     build: 
-      context: ./user-api
+      context: ./services/user-api
       target: dev
     container_name: user-api
     ports:
       - 8081:8080
     volumes:
-      - ./user-api/app:/node-app/app
+      - ./services/user-api/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
 
   conversation-api:
     build:
-      context: ./conversation-api
+      context: ./services/conversation-api
       target: dev
     container_name: conversation-api
     ports:
       - 8082:8080
     volumes:
-      - ./conversation-api/app:/node-app/app
+      - ./services/conversation-api/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
 
   image-server:
     build:
-      context: ./image-server
+      context: ./services/image-server
       target: dev
     container_name: image-server
     ports:
       - 8083:8080
     volumes:
-      - ./image-server/app:/node-app/app
+      - ./services/image-server/app:/node-app/app
     depends_on:
       cassandra-db:
         condition: service_healthy
