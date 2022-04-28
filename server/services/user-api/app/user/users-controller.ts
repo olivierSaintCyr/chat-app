@@ -7,7 +7,7 @@ import proxy from 'express-http-proxy';
 export class UsersController {
     router = express.Router();
 
-    private IMAGE_SERVER_URL = process.env.IMAGE_SERVER_HOST as string;
+    private readonly IMAGE_SERVER_URL = process.env.IMAGE_SERVER_HOST as string;
 
     constructor(
         private usersService: UsersService,
