@@ -23,7 +23,7 @@ export class ConversationsDBService {
        await this.client.execute(query);
        return uuid.toString();
     }
-
+    // TODO REFACTOR NO conversation row out of this service
     async getConversation(conversationId: string) {
         const query = `SELECT * FROM conversation WHERE id = ${conversationId};`;
         console.log(query);
