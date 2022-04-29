@@ -30,6 +30,10 @@ export class UsersPermissionsService {
         return allFriends;
     }
 
+    async hasPermissionToAddUser(userId: string, userIdToAdd: string) {
+        return await this.userDB.isFriendOf(userId, userIdToAdd);
+    } 
+
     private async isUserIn(userId: string, conversationId: string) {
         try {
             const users = await this.conversationsDB.getUsers(conversationId);

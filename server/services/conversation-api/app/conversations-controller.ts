@@ -108,52 +108,63 @@ export class ConversationsController {
                 return res.sendStatus(400);
             }
         });
-        
+        // TODO FIX AND TEST
         this.router.post('/users', async (req, res) => {
             // TODO remove addedBy use the auth id instead
-            const { userId } = res.locals;
-            const { conversationId, addedBy } = req.body;
-            if (conversationId === undefined
+            const { userId: addedBy } = res.locals;
+            const { conversationId, user } = req.body;
+            if (user === undefined
+                || conversationId === undefined
                 || addedBy === undefined
             ) {
                 return res.sendStatus(400);
             }
 
+            if (!isUuid(conversationId) || !isUuid(user)) {
+                return res.sendStatus(400);
+            }
+
             // TODO verify if user adding the new user is in convo
-            const hasRights = await this.usersPermissions.hasPermissionToView(addedBy, conversationId);
-            if (!hasRights) {
+            const hasRightToEdit = await this.usersPermissions.hasPermissionToEdit(addedBy, conversationId);
+            const hasRightToAddUser = await this.usersPermissions.hasPermissionToAddUser(addedBy, user);
+            if (!hasRightToEdit || !hasRightToAddUser) {
                 return res.sendStatus(401);
             }
 
             // TODO verify if friends
             try {
-                await this.conversationService.addUser(userId, conversationId);
+                await this.conversationService.addUser(user, conversationId);
                 return res.sendStatus(200);
             } catch (e) {
                 return res.sendStatus(400);
             }
         });
-
+        // TODO rename conversationId for conversation
         this.router.delete('/users', async (req, res) => {
             // TODO remove removedBy use the auth id instead
-            const { userId } = res.locals;
-            const { conversationId, removedBy } = req.body;
+            const { userId: removedBy } = res.locals;
+            const { conversationId, user } = req.body;
             // TODO check if conversationId is Uuid
-            if (conversationId === undefined
+            if (user === undefined
+                || conversationId === undefined
                 || removedBy === undefined
             ) {
                 return res.sendStatus(400);
             }
 
+            if (!isUuid(conversationId) || !isUuid(user)) {
+                return res.sendStatus(400);
+            }
+
             // TODO verify if user adding the new user is in convo
-            const hasRights = await this.usersPermissions.hasPermissionToView(removedBy, conversationId);
-            if (!hasRights) {
+            const hasRightToEdit = await this.usersPermissions.hasPermissionToEdit(removedBy, conversationId);
+            if (!hasRightToEdit) {
                 return res.sendStatus(401);
             }
 
             // TODO verify if friends
             try {
-                await this.conversationService.removeUser(userId, conversationId);
+                await this.conversationService.removeUser(user, conversationId);
                 return res.sendStatus(200);
             } catch (e) {
                 return res.sendStatus(400);
@@ -161,7 +172,6 @@ export class ConversationsController {
         });
 
         this.router.post('/quit', async (req, res) => {
-            // TODO replace userId by userId after auth
             const { userId } = res.locals;
             const { conversationId } = req.body;
             if (conversationId === undefined) {
