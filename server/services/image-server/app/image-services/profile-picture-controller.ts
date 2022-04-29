@@ -1,7 +1,8 @@
 import { ProfilePictureService } from '@app/image-services/profile-picture.service';
 import { PROFILE_PICTURE_UPLOAD_DIR_PATH } from '@app/paths';
-import { SUPPORTED_FILES } from '@app/supported-files';
+import { PROFILE_PIC_HEIGHT, PROFILE_PIC_WIDTH, SUPPORTED_FILES } from '@app/supported-files';
 import { Router } from 'express';
+import sizeOf from 'image-size';
 import multer from 'multer';
 import internal from 'stream';
 
@@ -41,7 +42,19 @@ export class ProfilePictureController {
             if (file === undefined) {
                 return res.sendStatus(400);
             }
+
             const filePath = (file as Express.Multer.File).path;
+
+            const { width, height } = sizeOf(filePath);
+            if (width === undefined || height === undefined) {
+                return res.sendStatus(400);
+            }
+
+            const imageValid = this.validateImageDimensions(width, height);
+            if (!imageValid) {
+                return res.sendStatus(400);
+            }
+
             const imageId = await this.profilePictureService.uploadPicture(filePath);
             return res.send({ imageId });
         });
@@ -53,5 +66,9 @@ export class ProfilePictureController {
             return cb(err);
         }
         cb(null, true);
+    }
+
+    private validateImageDimensions(width: number, height: number) {
+        return height === PROFILE_PIC_HEIGHT && width === PROFILE_PIC_WIDTH;
     }
 }

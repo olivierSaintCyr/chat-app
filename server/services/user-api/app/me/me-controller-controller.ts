@@ -125,7 +125,10 @@ export class MeController {
             }
             const { userId } = res.locals;
             try {
-                await this.usersService.updateProfilePicture(userId, file);
+                const profilePicId = await this.usersService.updateProfilePicture(userId, file);
+                if (profilePicId === null) {
+                    return res.sendStatus(400);
+                }
                 return res.sendStatus(200);
             } catch (e) {
                 return res.sendStatus(400);

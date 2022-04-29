@@ -47,14 +47,12 @@ export class UsersService {
 
     async updateProfilePicture(userId: string, file: Express.Multer.File) {
         const filePath = file.path;
-        const profilePicturePath = await this.profilePicService.updatePictureFile(file);
-        if (!profilePicturePath) {
-            this.removeTempFile(filePath);
-            return null;
+        const profilePictureId = await this.profilePicService.updatePictureFile(file);
+        if (profilePictureId) {
+            await this.usersDB.updateProfilePicture(userId, profilePictureId);
         }
-        await this.usersDB.updateProfilePicture(userId, profilePicturePath);
         this.removeTempFile(filePath);
-        return profilePicturePath;
+        return profilePictureId;
     }
 
     private removeTempFile(filePath: string) {
