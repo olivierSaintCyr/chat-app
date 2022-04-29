@@ -26,6 +26,27 @@ export class ConversationsController {
                 return res.sendStatus(400)
             }
         });
+
+        this.router.get('/info', async (req, res) => {
+            const { userId } = res.locals;
+            const { conversationId } = req.body;
+            if (conversationId === undefined) {
+                return res.sendStatus(400);
+            }
+
+            const hasRightToView = await this.usersPermissions.hasPermissionToView(userId, conversationId);
+            if (!hasRightToView) {
+                return res.sendStatus(401);
+            }
+
+            try {
+                const conversation = await this.conversationService.getConversation(conversationId);
+                return res.send(conversation);
+            } catch (e) {
+                return res.sendStatus(400);
+            }
+        });
+
         // TODO find better name and refactor for better perf
         this.router.get('/lastActive', async (req, res) => {
             const { userId } = res.locals;

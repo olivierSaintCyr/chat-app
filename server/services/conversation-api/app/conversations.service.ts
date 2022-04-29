@@ -56,6 +56,12 @@ export class ConversationsService {
         return this.userDB.getConversations(userId);
     }
 
+    async getConversation(conversationId: string) {
+        const conversationRow = await this.conversationDB.getConversation(conversationId);
+        const conversation = await this.conversationRowToActiveConversation(conversationRow);
+        return conversation;
+    }
+
     async changeTitle(title: string, conversationId: string) {
         await this.conversationDB.updateTitle(title, conversationId);
     }
