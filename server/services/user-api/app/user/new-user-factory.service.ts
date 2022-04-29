@@ -1,3 +1,4 @@
+import { DEFAULT_PROFILE_PIC_PATH } from '@app/new-user-default-values';
 import { NewUser } from '@app/user/user.interface';
 import { Service } from 'typedi';
 
@@ -7,7 +8,7 @@ export class NewUserFactory {
         return {
             id: userId,
             name,
-            imageUrl: 'profile-pictures/default',
+            imageUrl: DEFAULT_PROFILE_PIC_PATH,
         }
     }
 }
